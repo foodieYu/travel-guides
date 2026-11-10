@@ -140,6 +140,22 @@ h2.vt{font-family:var(--f-display);font-size:21px;color:var(--coffee);margin:0 0
 .btn.sec{background:var(--foam);color:var(--coffee)}
 .btn.full{width:100%;margin-top:16px;min-height:52px;font-size:15.5px}
 
+.fgroup{margin-bottom:26px}
+.fg-h{display:flex;align-items:center;gap:12px;margin:0 0 12px}
+.fg-d{flex:none;background:var(--coffee);color:var(--cream);font-family:var(--f-display);font-weight:700;font-size:14px;border-radius:12px;padding:6px 11px}
+.fg-h b{display:block;font-family:var(--f-display);font-size:17px;color:var(--coffee);line-height:1.3}
+.fg-h small{font-size:12px;color:var(--ink-soft)}
+.fc .acts{grid-template-columns:1fr 1fr 1.15fr;padding:12px 16px 4px}
+.btn.soc{background:var(--foam);color:var(--coffee)}
+.btn.soc svg{color:var(--caramel)}
+.extra{display:flex;flex-wrap:wrap;gap:4px 14px;padding:6px 16px 14px}
+.lnk{border:0;background:none;padding:6px 0;font-size:12.5px;color:var(--caramel);font-weight:700;text-decoration:none;cursor:pointer;min-height:32px}
+.warn{display:flex;gap:7px;align-items:flex-start;background:#FBE9DA;color:#8A4A1C;border-radius:12px;padding:8px 10px;font-size:12.5px;line-height:1.5;margin-top:8px}
+.warn svg{width:16px;height:16px;flex:none;margin-top:2px}
+.loc{display:flex;gap:6px;align-items:flex-start;font-size:12px;color:var(--ink-soft);margin-top:8px;line-height:1.5}
+.loc svg{width:14px;height:14px;flex:none;margin-top:3px;color:var(--milk)}
+.gm{background:var(--foam);border-radius:18px;padding:13px 15px;font-size:13px;display:grid;gap:4px;color:var(--coffee)}
+.gm b{font-size:13px;color:var(--milk);letter-spacing:.04em}
 /* Info */
 .isec{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:16px 16px 14px;margin-bottom:14px}
 .isec h3{font-family:var(--f-display);font-size:17px;color:var(--coffee);margin:0 0 10px;display:flex;align-items:center;gap:8px}
@@ -542,9 +558,94 @@ const OFFICIAL = {
  5:{ text:['飯店 → 熊本機場‧機場商店街購物 → 台北。','早餐後整理行裝，專車前往機場，於機場商店街內自由購物，搭機飛返台北。'],
      tip:'' }
 };
-/* 美食付費方式 */
-const PAID = {'城彩苑小吃巡禮':'自理','勝烈亭 新市街本店':'自理','黑亭拉麵 本店':'自理','高千穗御膳料理':'團餐已含','B-speak 蛋糕捲':'自理','蒸籠料理':'團餐已含',
-  '中洲屋台':'自理','一蘭拉麵 總本店':'自理','柳川蒸籠鰻魚飯':'團餐已含','熊本馬肉料理':'自理','桂花拉麵 本店':'自理'};
+/* ============ 美食特搜：自由覓食推薦 ============ */
+const FOOD = [
+ { d:1, area:'新市街', name:'勝烈亭 新市街本店', jp:'勝烈亭 新市街本店', img:'1770966666361-b448e634e163',
+   tag:'鹿兒島六白黑豚炸豬排・Tabelog 百名店', from:'下通商店街步行約 5 分',
+   info:'熊本市中央區新市街｜午、晚營業，晚餐尖峰常排 30–60 分',
+   tips:['招牌是六白黑豚里肌（ロース）與腰內（ヒレ），肉汁多、麵衣薄脆','先自己磨芝麻，再加甜、辣兩種醬汁調比例','白飯、高麗菜絲、味噌湯可續，想吃清爽選腰內'],
+   photo:['豬排斷面朝鏡頭 45 度，旁邊擺芝麻缽','整份定食從正上方俯拍'],
+   q:'勝烈亭 新市街本店', ig:'勝烈亭', th:'勝烈亭 熊本' },
+ { d:1, area:'二本木', name:'熊本拉麵 黑亭 本店', jp:'黒亭 本店', img:'1591325418441-ff678baf78ef',
+   tag:'焦香蒜油＋生蛋黃拉麵', from:'下通搭計程車約 10 分；市電「二本木口」站步行約 3 分',
+   info:'熊本市西區二本木（熊本站附近）｜1957 年創業',
+   tips:['招牌「玉子入りラーメン」放兩顆生蛋黃，戳破拌進湯裡更濃','豚骨湯頭配黑色焦蒜油（マー油），是熊本拉麵的標準味道','中細直麵偏硬，越吃越入味'],
+   photo:['湯面黑蒜油＋金黃蛋黃，貼近碗緣低角度拍','白色暖簾與店招是拉麵迷必拍'],
+   q:'黒亭 本店 熊本', ig:'黒亭', th:'黑亭 熊本拉麵' },
+ { d:1, area:'下通', name:'炭火燒鳥 ヒノトリ', jp:'炭火焼鳥 ヒノトリ（Hinotori）', img:'1786301422464-e1bd0b9bde7c',
+   tag:'天草大王炙燒、炸雞皮，營業到凌晨', from:'熊本熊廣場步行約 5 分；市電「花畑町」站步行約 3 分',
+   info:'熊本市中央區下通 1-4-14 長江ビル B1｜18:00–翌 04:00（週五、六至 06:00）',
+   tips:['熊本地雞「天草大王のタタキ」：外層炙燒、中間保留嫩度','10 串拼盤（10本盛り）一次吃到多種部位','炸雞皮（ズリ皮の唐揚げ）酥脆，配啤酒剛好','招牌醬是秘傳蒜香醬，也可選鹽味'],
+   photo:['炭火烤台前的煙霧與串燒，用夜間模式拍','天草大王 tataki 切面近拍'],
+   q:'炭火焼鳥 ヒノトリ 熊本', ig:'ヒノトリ', th:'ヒノトリ 熊本 燒鳥' },
+ { d:1, area:'下通', name:'元祖紅蘭亭 下通本店', jp:'紅蘭亭 下通本店', img:'1558220831-9ad8f955fb9b',
+   tag:'熊本靈魂鄉土料理：太平燕', from:'下通商店街入口旁；市電「通町筋」站步行約 1 分',
+   info:'熊本市中央區安政町 5-26（下通入口）',
+   tips:['太平燕：用冬粉代替麵，加上炸過的雞蛋、蝦、蔬菜和肉片','雞骨＋豬骨熬的清湯，熱量比拉麵低','源自福建料理，在熊本發展成學校營養午餐也會出現的家常味'],
+   photo:['俯拍整碗：炸蛋、蝦、蔬菜放射狀排開','夾起冬粉的動作特寫'],
+   q:'紅蘭亭 下通本店', ig:'紅蘭亭', th:'紅蘭亭 太平燕' },
+ { d:1, area:'下通', name:'菅乃屋／馬櫻', jp:'馬肉料理 菅乃屋・馬肉ダイニング 馬桜', img:'1648977555545-4dd006e30d3f',
+   tag:'極上鮮嫩馬刺、馬肉壽喜燒', from:'都在下通一帶，步行 3–5 分',
+   info:'馬櫻 下通店：下通 1-12-1 光園ビル 2F｜菅乃屋 銀座通り店：下通 1-9-1 ダイワロイネット 2F',
+   tips:['馬刺拼盤：霜降、赤身、鬃毛（たてがみ）一次吃到','沾九州甜醬油，配薑泥、蒜片','馬櫻的「桜せいろ蒸し」（馬肉蒸籠）一天限量約 20 份','馬肉赤身高蛋白、低脂，控制飲食也適合'],
+   photo:['黑色盤子上的粉紅色馬刺，顏色對比最上相','壽喜燒涮肉沾蛋液的瞬間'],
+   q:'馬肉ダイニング 馬桜 下通り店', alt:{label:'菅乃屋 銀座通り店', q:'馬肉料理 菅乃屋 銀座通り店'}, ig:'菅乃屋', th:'菅乃屋 馬刺 熊本' },
+
+ { d:3, area:'湯布院', name:'B-speak 奶油蛋糕捲', jp:'B-speak P ロール', img:'1760136874870-701b323169ed',
+   tag:'湯布院排隊名店，奶香濃郁', from:'湯之坪街道入口附近，步行約 3 分',
+   info:'由布院 湯之坪街道（玉の湯旁）｜賣完為止，下午常售罄',
+   tips:['招牌 P ロール：蛋糕體綿密、鮮奶油輕盈不膩','有原味、巧克力，也能買切片','一到湯布院先去買，晚到常買不到；保存期限短，當天吃完'],
+   photo:['切片斷面朝鏡頭，白色奶油與蛋糕體對比','拿著紙盒以湯布院街道為背景'],
+   q:'B-speak 由布院', ig:'bspeak', th:'B-speak 湯布院 蛋糕捲' },
+ { d:3, area:'湯布院', name:'史努比茶屋 由布院店', jp:'スヌーピー茶屋 由布院店', img:'1760243875212-ebaaf3126fb8',
+   tag:'IG 超紅的角色造型抹茶甜點', from:'湯之坪街道中段，步行約 5 分',
+   info:'由布院 湯之坪街道｜內用常排隊',
+   tips:['和風主題的抹茶聖代、角色造型甜點是人氣款','內用排隊久，時間不夠可買外帶麵包或限定周邊','由布院店有地區限定商品'],
+   photo:['門口和風造型立像早到先拍','甜點上桌後側光拍，造型最立體'],
+   q:'スヌーピー茶屋 由布院店', ig:'スヌーピー茶屋', th:'史努比茶屋 由布院' },
+ { d:3, area:'中洲', name:'中洲屋台街', jp:'中洲屋台', img:'1749894274841-95fa78941841',
+   tag:'福岡招牌河畔路邊攤', from:'地鐵「中洲川端」站步行約 5 分',
+   info:'那珂川沿岸｜約 18:00 起陸續開攤，雨天可能休息',
+   tips:['人氣品項：豚骨拉麵、關東煮、烤雞皮、明太子玉子燒','一攤只有 8～10 個座位，人多可分散排','建議帶現金，每人至少點一份餐'],
+   photo:['對岸拍屋台燈籠與河面倒影','暖簾外的人影剪影最有氛圍'],
+   q:'中洲屋台', ig:'中洲屋台', th:'中洲屋台 推薦' },
+ { d:3, area:'天神', name:'屋台 小金ちゃん', jp:'小金ちゃん（焼きラーメン）', img:'1674516585624-422828b423f1',
+   tag:'福岡炒拉麵（焼きラーメン）始祖屋台', from:'在天神，不在中洲：中洲過去步行約 15 分／計程車約 5 分；地鐵天神站 1 號出口步行 5 分',
+   warn:'週四、週日公休。11/12 剛好是星期四，當天很可能沒開，建議改排其他屋台。',
+   info:'福岡市中央區天神 2-14-13 天神三井ビル角｜18:00 過後～翌 0:00 L.O.（週五、六至 1:00）',
+   tips:['招牌「焼きラーメン」：豚骨湯底的麵直接在鐵板上炒，醬香微焦','もつ味噌煮（どて焼）、明太子玉子燒也很受歡迎','Threads 上很多人推，排隊時間長'],
+   photo:['鐵板炒麵起鍋的蒸氣','屋台招牌燈籠＋天神街景'],
+   q:'屋台 小金ちゃん 天神', ig:'小金ちゃん', th:'小金ちゃん 焼きラーメン' },
+ { d:3, area:'博多／中洲', name:'博多一双／一蘭拉麵總本店', jp:'博多一双 博多駅東本店・一蘭 本社総本店', img:'1509680859026-7d8cfc6894f4',
+   tag:'濃郁泡沫系豚骨拉麵', from:'一双在博多站東側步行約 10 分；一蘭總本店在中洲，屋台步行約 5 分',
+   info:'一双：博多區博多駅東 3-1-6｜11:00–24:00；一蘭總本店：中洲，24 小時營業',
+   tips:['一双被稱為「豚骨卡布奇諾」：湯面細密泡沫，濃厚但收尾不膩','一双推薦「特製ラーメン」，有叉燒、溏心蛋、木耳','一蘭總本店限定方形重箱碗；點餐單可選湯濃度、蒜量、辣度','一双常排隊；一蘭總本店宵夜時段人較少'],
+   photo:['一双湯面的泡沫近拍','一蘭總本店紅色大招牌，晚上最亮'],
+   q:'博多一双 博多駅東本店', alt:{label:'一蘭 總本店', q:'一蘭 本社総本店'}, ig:'博多一双', th:'博多一双 豚骨' },
+ { d:3, area:'天神', name:'敘敘苑 天神岩田屋店', jp:'叙々苑 天神岩田屋店', img:'1759150595639-d128196ab6b3',
+   tag:'高級燒肉午間套餐', from:'在天神岩田屋百貨內；地鐵天神站步行約 3 分',
+   warn:'Day 3 中午人在湯布院，午間套餐趕不上；想吃可改晚餐，但價位比午餐高很多。',
+   info:'岩田屋（福岡市中央區天神 2-5-35）內，樓層以現場為準｜11:00–22:00（L.O. 21:00）',
+   tips:['東京老牌高級燒肉，平日午間套餐是最划算的入門方式','招牌鹽味牛舌、上等五花，附沙拉與甜點','晚餐預算約 ¥5,500–14,000，建議先訂位'],
+   photo:['網上烤肉滋滋作響的瞬間，用連拍抓油花','窗邊座位拍天神街景'],
+   q:'叙々苑 天神岩田屋店', ig:'叙々苑', th:'敘敘苑 福岡 天神' },
+
+ { d:4, area:'花畑町', name:'菅乃屋／むつ五郎', jp:'馬肉専門料理 むつ五郎・菅乃屋', img:'1758881906970-0893b7331da0',
+   tag:'熊本晚間馬肉專門居酒屋', from:'熊本格利茲酒店步行約 10 分',
+   info:'むつ五郎：熊本市中央區花畑町 12-11 熊本グリーンホテル B1｜菅乃屋 銀座通り店：下通 1-9-1 2F',
+   tips:['むつ五郎有約 30 道馬肉料理：馬ヒレステーキ、馬刺、馬一口カツ、馬肉燉煮','菅乃屋的特選ハリハリ鍋套餐約 ¥9,900','Day 1 沒吃到馬肉，這晚是最後機會'],
+   photo:['馬肉排切面近拍','整桌馬肉料理俯拍'],
+   q:'馬肉専門料理 むつ五郎 熊本', alt:{label:'菅乃屋 銀座通り店', q:'馬肉料理 菅乃屋 銀座通り店'}, ig:'むつ五郎', th:'むつ五郎 熊本 馬肉' },
+ { d:4, area:'新市街', name:'桂花拉麵 本店', jp:'桂花ラーメン 本店', img:'1694708455249-992010f9db32',
+   tag:'焦蒜黑油太肉麵的創始店', from:'熊本格利茲酒店步行約 10 分',
+   info:'熊本市中央區新市街｜1955 年創業',
+   tips:['招牌「太肉麵（ターロー麺）」：大塊滷五花，入口即化','生高麗菜、木耳、蒜酥，再淋上焦蒜油','和黑亭比，桂花的蒜香更重、湯頭更濃'],
+   photo:['夾起太肉對著鏡頭','俯拍碗內：高麗菜綠、蒜油黑的配色'],
+   q:'桂花ラーメン 本店', ig:'桂花ラーメン', th:'桂花拉麵 熊本' }
+];
+const GROUP_MEALS = [
+ {d:2, name:'高千穗御膳料理（¥2000）'}, {d:3, name:'湯布院 蒸籠料理（¥2000）'}, {d:4, name:'柳川蒸籠鰻魚飯（¥2000）'}
+];
 /* 拆掉美食卡後，修正第 4 天住宿的移動資訊 */
 (() => { const st = DAYS[3].items.find(i=>i.type==='stay');
   st.leg = {m:'car', t:'柳川返回熊本，車程約 1 小時 30 分'};
@@ -567,7 +668,6 @@ const navUrl = q => 'https://www.google.com/maps/dir/?api=1&travelmode=driving&d
 const searchUrl = q => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
 const ALL = [];
 DAYS.forEach(day => day.items.forEach(it => { it.day = day; it.i = ALL.push(it) - 1; }));
-const FOODS = ALL.filter(it => it.type === 'food');
 const imgTag = (it,w) => `<img loading="lazy" src="${U(it.img,w)}" alt="${esc(it.name)} 示意圖" onerror="this.remove()">`;
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('show'),1800); }
 
@@ -580,13 +680,13 @@ $('#mt-food').innerHTML = ICON.bowl + '美食特搜';
 $('#mt-info').innerHTML = ICON.info + '實用資訊';
 $('#dayTabs').innerHTML = DAYS.map(d => `<button class="dt" role="tab" data-d="${d.d}" aria-controls="v-itinerary">
   ${d===todayDay?'<span class="today">今天</span>':''}<b>Day ${d.d}</b><small>${d.md}</small></button>`).join('');
-$('#foodChips').innerHTML = `<button class="chip" data-fd="0">全部 ${FOODS.length}</button>` +
-  DAYS.map(d => { const n = FOODS.filter(f=>f.day===d).length; return n ? `<button class="chip" data-fd="${d.d}">Day ${d.d}・${n}</button>` : ''; }).join('');
+$('#foodChips').innerHTML = `<button class="chip" data-fd="0">全部 ${FOOD.length}</button>` +
+  DAYS.map(d => { const n = FOOD.filter(f=>f.d===d.d).length; return n ? `<button class="chip" data-fd="${d.d}">Day ${d.d}・${n}</button>` : ''; }).join('');
 
 /* ============ itinerary ============ */
 function renderDay(){
   const day = DAYS[state.day-1], off = OFFICIAL[day.d];
-  const foods = FOODS.filter(f => f.day === day);
+  const foods = FOOD.filter(f => f.d === day.d);
   let h = `<div class="day-head">
       <div class="day-num"><small>DAY</small><b>${String(day.d).padStart(2,'0')}</b></div>
       <div class="day-meta"><div class="day-date">${day.date}（${day.wk}）${day===todayDay?' ・ 今天':''}</div>
@@ -613,21 +713,65 @@ function renderDay(){
 }
 
 /* ============ food ============ */
-function renderFood(){
-  const list = state.foodDay ? FOODS.filter(f => f.day.d === state.foodDay) : FOODS;
-  const own = list.filter(f => PAID[f.name] === '自理').length;
-  $('#foodSub').textContent = `${state.foodDay ? 'Day '+state.foodDay : '全程'}共 ${list.length} 家，其中 ${own} 家需自理、${list.length-own} 家為團餐已含。`;
-  $('#foodGrid').innerHTML = list.map(f => `<article class="fc">
-    <button class="fc-hit" data-i="${f.i}" aria-label="${esc(f.name)} 詳細解析">
-      <div class="ph">${imgTag(f)}<span class="tag food">Day ${f.day.d}・${f.day.md}</span>${f.time?`<span class="time">${esc(f.time)}</span>`:''}</div>
-      <div class="cb"><div class="badges"><span class="bdg ${PAID[f.name]==='自理'?'own':''}">${PAID[f.name]||'自理'}</span></div>
-        <h3>${esc(f.name)}</h3><div class="jp">${esc(f.jp)}</div>
-        <p class="why" style="-webkit-line-clamp:unset;display:block"><b>必吃理由</b>　${esc(f.desc)}</p>
-        <ul>${f.blog.slice(0,2).map(b=>`<li>${esc(b)}</li>`).join('')}</ul></div>
+const igUrl = tag => 'https://www.instagram.com/explore/tags/' + encodeURIComponent(tag) + '/';
+const thUrl = q => 'https://www.threads.com/search?q=' + encodeURIComponent(q) + '&serp_type=default';
+const tbUrl = q => 'https://tabelog.com/rstLst/?sk=' + encodeURIComponent(q);
+const TH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16.5 11.2c-.3-2.6-1.9-4-4.3-4-1.6 0-2.9.7-3.6 1.9M12.4 12.3c2.6-.3 4.7.3 4.6 2.6-.1 2-2 3.2-4 3-1.7-.1-2.7-1.2-2.6-2.4.2-1.6 2.1-2.4 6-1.9"/><path d="M19 7c-1.4-2.6-3.8-4-7-4-5 0-8 3.4-8 9s3 9 8 9c3.8 0 6.5-1.8 7.4-4.8"/></svg>';
+const IG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".8" fill="currentColor"/></svg>';
+const AREA_ORDER = {1:'熊本城彩苑・上下通', 3:'湯布院・福岡市區', 4:'太宰府・柳川・熊本'};
+function foodCard(f, k){
+  return `<article class="fc">
+    <button class="fc-hit" data-f="${k}" aria-label="${esc(f.name)} 詳細解析">
+      <div class="ph">${imgTag(f)}<span class="tag food">Day ${f.d}・${esc(f.area)}</span></div>
+      <div class="cb"><h3>${esc(f.name)}</h3><div class="jp">${esc(f.jp)}</div>
+        <p class="why"><b>必吃</b>　${esc(f.tag)}</p>
+        ${f.warn?`<div class="warn">${ICON.info}<span>${esc(f.warn)}</span></div>`:''}
+        <ul>${f.tips.slice(0,2).map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
+        <div class="loc">${ICON.walk}${esc(f.from)}</div></div>
     </button>
-    <div class="acts"><button class="btn sec" data-i="${f.i}">${ICON.star}特色解析</button>
-      <a class="btn pri" href="${searchUrl(f.q||f.name)}" target="_blank" rel="noopener">${ICON.map}Google 導航</a></div>
-  </article>`).join('');
+    <div class="acts">
+      <a class="btn soc" href="${thUrl(f.th)}" target="_blank" rel="noopener">${TH_ICON}Threads</a>
+      <a class="btn soc" href="${igUrl(f.ig)}" target="_blank" rel="noopener">${IG_ICON}IG</a>
+      <a class="btn pri" href="${navUrl(f.q)}" target="_blank" rel="noopener">${ICON.map}導航</a>
+    </div>
+    <div class="extra"><button class="lnk" data-f="${k}">完整解析 ›</button>
+      ${f.alt?`<a class="lnk" href="${navUrl(f.alt.q)}" target="_blank" rel="noopener">導航到 ${esc(f.alt.label)}</a>`:''}
+      <a class="lnk" href="${tbUrl(f.q)}" target="_blank" rel="noopener">Tabelog 評價</a></div>
+  </article>`;
+}
+function renderFood(){
+  const days = state.foodDay ? [state.foodDay] : [1,3,4];
+  const total = state.foodDay ? FOOD.filter(f=>f.d===state.foodDay).length : FOOD.length;
+  $('#foodSub').textContent = `收集 Threads／IG／小紅書／Tabelog 熱門的自由覓食名單，${state.foodDay?'Day '+state.foodDay+' ':''}共 ${total} 家。每家都能一鍵看網友推薦或導航。`;
+  let h = '';
+  days.forEach(d => {
+    const list = FOOD.map((f,k)=>[f,k]).filter(([f])=>f.d===d);
+    const day = DAYS[d-1];
+    h += `<div class="fgroup"><div class="fg-h"><span class="fg-d">Day ${d}</span><div><b>${AREA_ORDER[d]||esc(day.title)}</b><small>${day.md}（${day.wk}）</small></div></div>`;
+    h += list.length ? `<div class="fgrid">${list.map(([f,k])=>foodCard(f,k)).join('')}</div>` : `<p class="vsub">這天三餐都由團體安排，沒有自理餐。</p>`;
+    h += `</div>`;
+  });
+  const gm = GROUP_MEALS.filter(g => !state.foodDay || g.d===state.foodDay);
+  if (gm.length) h += `<div class="gm"><b>團餐（已含，不用另外找）</b>${gm.map(g=>`<span>Day ${g.d}・${esc(g.name)}</span>`).join('')}</div>`;
+  $('#foodGrid').innerHTML = h;
+}
+function openFood(k){
+  const f = FOOD[k], day = DAYS[f.d-1];
+  shImg.style.display=''; shImg.src = U(f.img,1200); shImg.alt = f.name + ' 示意圖';
+  shBody.innerHTML = `
+    <div class="sh-kicker">DAY ${f.d} ・ ${day.md}（${day.wk}）・ ${esc(f.area)} ・ 自理</div>
+    <h3 class="sh-title" id="shTitle">${esc(f.name)}</h3><div class="jp">${esc(f.jp)}</div>
+    <p class="sh-desc"><b style="color:var(--caramel)">必吃</b>　${esc(f.tag)}</p>
+    ${f.warn?`<div class="warn" style="margin-top:12px">${ICON.info}<span>${esc(f.warn)}</span></div>`:''}
+    <div class="blk drive"><h4>${ICON.walk}怎麼去</h4><div class="drive-route" style="font-size:15px">${esc(f.from)}</div><div class="drive-note">${esc(f.info)}</div></div>
+    <div class="blk"><h4>${ICON.bowl}必吃特色解析</h4><ul>${list(f.tips)}</ul></div>
+    <div class="blk"><h4>${ICON.cam}拍照建議</h4><ul>${list(f.photo)}</ul></div>
+    <div class="acts" style="padding:14px 0 0">
+      <a class="btn soc" href="${thUrl(f.th)}" target="_blank" rel="noopener">${TH_ICON}Threads</a>
+      <a class="btn soc" href="${igUrl(f.ig)}" target="_blank" rel="noopener">${IG_ICON}IG</a>
+      <a class="btn pri" href="${navUrl(f.q)}" target="_blank" rel="noopener">${ICON.map}導航</a></div>
+    <p class="drive-note" style="color:var(--ink-soft);margin-top:10px">營業時間與公休可能變動，出發前用 Google Maps 再確認一次。</p>`;
+  openSheet();
 }
 
 /* ============ info ============ */
@@ -696,6 +840,7 @@ document.querySelector('main').addEventListener('click', e => {
   const s = e.target.closest('[data-step]'); if (s){ state.day = Math.min(5, Math.max(1, state.day + +s.dataset.step)); show('itinerary'); return; }
   const g = e.target.closest('[data-goto-food]'); if (g){ state.foodDay = +g.dataset.gotoFood; show('food'); return; }
   const c = e.target.closest('[data-copy]'); if (c){ copy(c.dataset.copy); return; }
+  const f = e.target.closest('[data-f]'); if (f){ openFood(+f.dataset.f); return; }
   const o = e.target.closest('[data-i]'); if (o) openItem(+o.dataset.i);
 });
 function copy(text){
@@ -726,7 +871,7 @@ function openItem(i){
   if (it.img) shImg.src = U(it.img,1200);
   shImg.alt = it.name + ' 示意圖';
   shBody.innerHTML = `
-    <div class="sh-kicker">DAY ${it.day.d} ・ ${it.day.md}（${it.day.wk}）・ ${TAG[it.type]}${isFood?' ・ '+(PAID[it.name]||'自理'):''}</div>
+    <div class="sh-kicker">DAY ${it.day.d} ・ ${it.day.md}（${it.day.wk}）・ ${TAG[it.type]}</div>
     <h3 class="sh-title" id="shTitle">${esc(it.name)}</h3><div class="jp">${esc(it.jp)}</div>
     <p class="sh-desc">${esc(it.desc)}</p>
     <div class="blk drive"><h4>${ICON[it.leg.m]}交通預估</h4>
@@ -735,6 +880,9 @@ function openItem(i){
     ${list(it.photo)?`<div class="blk"><h4>${ICON.cam}必拍角度／私房視角</h4><ul>${list(it.photo)}</ul></div>`:''}
     <div class="blk"><h4>${ICON[isFood?'bowl':'star']}${isFood?'必吃特色解析':'網路推薦重點'}</h4><ul>${list(it.blog)}</ul></div>
     ${it.q?`<a class="btn pri full" href="${isFood?searchUrl(it.q):navUrl(it.q)}" target="_blank" rel="noopener">${ICON.map}用 Google Maps ${isFood?'搜尋導航':'導航'}</a>`:''}`;
+  openSheet();
+}
+function openSheet(){
   $('#sheetScroll').scrollTop = 0;
   lastFocus = document.activeElement;
   sheet.classList.add('open'); scrim.classList.add('open'); sheet.setAttribute('aria-hidden','false'); document.body.classList.add('lock');
