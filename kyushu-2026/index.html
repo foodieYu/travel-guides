@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5C4033">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>輕遊福熊五日手冊</title>
+<meta name="description" content="2026/11/10–11/14 熊本・高千穗・湯布院・福岡・柳川 五日行程手冊">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: fixed coffee header with day tabs → single-column timeline of photo cards → bottom-sheet modal */
+:root{
+  --milk:#B08E6B;        /* 奶茶 */
+  --cream:#FDFBF7;       /* 奶油白 */
+  --coffee:#5C4033;      /* 深咖啡木質 */
+  --caramel:#C8823C;     /* 焦糖點綴 */
+  --foam:#F3EADF;        /* 奶泡 */
+  --line:#E6D9C8;
+  --ink:#3B2A20;
+  --ink-soft:#7A6555;
+  --card:#FFFFFF;
+  --shadow:0 6px 20px rgba(92,64,51,.10), 0 1px 3px rgba(92,64,51,.08);
+  --f-display:"Zen Maru Gothic","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --hdr:120px;
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --gut-l:max(16px, env(safe-area-inset-left,0px));
+  --gut-r:max(16px, env(safe-area-inset-right,0px));
+  color-scheme:light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;background:var(--coffee)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.65 var(--f-body);
+  padding-top:var(--hdr);min-height:100vh;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit}
+
+/* ===== Fixed header ===== */
+.hdr{position:fixed;inset:0 0 auto 0;z-index:50;background:var(--coffee);color:var(--cream);
+  padding-top:var(--safe-t);padding-left:var(--gut-l);padding-right:var(--gut-r);
+  box-shadow:0 4px 16px rgba(40,25,15,.25)}
+.hdr-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 2px 6px}
+.hdr-title{font-family:var(--f-display);font-weight:700;font-size:17px;letter-spacing:.04em;margin:0}
+.hdr-sub{font-size:12px;opacity:.75;letter-spacing:.06em;white-space:nowrap}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:4px 0 12px}
+.tab{border:0;background:rgba(253,251,247,.08);border-radius:14px;padding:7px 2px 6px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:1px;min-height:48px;color:var(--cream);
+  transition:background .25s,color .25s,transform .15s;position:relative}
+.tab:active{transform:scale(.96)}
+.tab b{font-family:var(--f-display);font-size:14px;font-weight:700;letter-spacing:.02em}
+.tab small{font-size:11px;opacity:.75;font-variant-numeric:tabular-nums}
+.tab[aria-selected="true"]{background:var(--cream);color:var(--coffee)}
+.tab[aria-selected="true"] small{opacity:.9}
+.tab .today{position:absolute;top:-5px;right:-2px;background:var(--caramel);color:#fff;font-size:9px;
+  padding:1px 5px;border-radius:8px;letter-spacing:.05em}
+.tab:focus-visible,.card:focus-visible,.btn:focus-visible,.close:focus-visible{outline:2px solid var(--caramel);outline-offset:2px}
+
+/* ===== Page ===== */
+main{padding-left:var(--gut-l);padding-right:var(--gut-r);padding-block:18px calc(40px + var(--safe-b));max-width:560px;margin:0 auto}
+.intro{background:linear-gradient(160deg,var(--milk),#9A7656);color:var(--cream);border-radius:24px;padding:20px 20px 18px;box-shadow:var(--shadow)}
+.intro h2{font-family:var(--f-display);font-size:23px;line-height:1.35;margin:0 0 4px;text-wrap:balance}
+.intro p{margin:0;font-size:13px;opacity:.9}
+.flights{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.flight{background:rgba(253,251,247,.14);border-radius:16px;padding:10px 12px;min-width:0}
+.flight .lbl{font-size:11px;letter-spacing:.1em;opacity:.8}
+.flight .no{font-family:var(--f-display);font-size:16px;font-weight:700}
+.flight .t{font-size:12.5px;font-variant-numeric:tabular-nums}
+
+.day{scroll-margin-top:calc(var(--hdr) + 8px);padding-top:28px}
+.day-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px}
+.day-num{flex:none;width:58px;height:58px;border-radius:18px;background:var(--coffee);color:var(--cream);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.day-num small{font-size:10px;letter-spacing:.14em;opacity:.8}
+.day-num b{font-family:var(--f-display);font-size:24px}
+.day-meta{min-width:0}
+.day-date{font-size:12.5px;color:var(--caramel);font-weight:700;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.day-title{font-family:var(--f-display);font-size:20px;margin:2px 0 0;line-height:1.35;color:var(--coffee);text-wrap:balance}
+.route{font-size:12.5px;color:var(--ink-soft);margin-top:4px}
+
+.meals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 16px}
+.meal{background:var(--foam);border-radius:14px;padding:8px 10px;min-width:0}
+.meal span{display:block;font-size:10.5px;letter-spacing:.12em;color:var(--milk);font-weight:700}
+.meal p{margin:0;font-size:12.5px;line-height:1.4;color:var(--coffee)}
+
+/* timeline */
+.tl{position:relative;display:flex;flex-direction:column;gap:0}
+.leg{display:flex;align-items:center;gap:8px;padding:8px 0 8px 18px;position:relative;font-size:12px;color:var(--ink-soft)}
+.leg::before{content:"";position:absolute;left:7px;top:0;bottom:0;border-left:2px dashed var(--line)}
+.leg .pill{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:3px 10px;display:inline-flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums}
+.leg svg{width:14px;height:14px;flex:none;color:var(--milk)}
+
+.card{width:100%;text-align:left;border:0;padding:0;cursor:pointer;background:var(--card);border-radius:22px;
+  box-shadow:var(--shadow);overflow:hidden;display:block;transition:transform .2s ease, box-shadow .2s ease}
+.card:active{transform:scale(.985)}
+@media (hover:hover){.card:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(92,64,51,.16)}}
+.ph{position:relative;aspect-ratio:16/10;background:linear-gradient(135deg,var(--foam),var(--line));max-width:100%}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph .tag{position:absolute;left:12px;top:12px;font-size:11px;font-weight:700;letter-spacing:.08em;padding:4px 10px;border-radius:20px;
+  background:rgba(253,251,247,.92);color:var(--coffee);backdrop-filter:blur(4px)}
+.tag.food{background:var(--caramel)!important;color:#fff!important}
+.tag.stay{background:var(--coffee)!important;color:var(--cream)!important}
+.ph .time{position:absolute;right:12px;top:12px;font-size:11px;padding:4px 9px;border-radius:20px;background:rgba(59,42,32,.72);color:var(--cream);font-variant-numeric:tabular-nums}
+.cb{padding:13px 16px 15px}
+.cb h3{margin:0;font-family:var(--f-display);font-size:17px;line-height:1.4;color:var(--coffee)}
+.cb .jp{font-size:12px;color:var(--ink-soft);margin-top:1px}
+.cb p{margin:6px 0 0;font-size:13.5px;color:var(--ink);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cb .more{margin-top:8px;font-size:12px;color:var(--caramel);font-weight:700;display:flex;align-items:center;gap:4px}
+
+.card.mini{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.card.mini .ico{flex:none;width:44px;height:44px;border-radius:14px;background:var(--coffee);color:var(--cream);display:grid;place-items:center}
+.card.mini .ico svg{width:22px;height:22px}
+.card.mini .cb{padding:0;min-width:0}
+.card.mini h3{font-size:15.5px}
+.card.mini p{-webkit-line-clamp:1;margin-top:2px;font-size:12.5px;color:var(--ink-soft)}
+
+.notes{margin-top:36px;background:var(--foam);border-radius:22px;padding:18px 18px 8px}
+.notes h2{font-family:var(--f-display);font-size:18px;margin:0 0 10px;color:var(--coffee)}
+.notes dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font-size:13.5px}
+.notes dt{color:var(--milk);font-weight:700;white-space:nowrap}
+.notes dd{margin:0;min-width:0}
+.foot{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-top:20px}
+.foot a{color:var(--ink-soft)}
+
+/* ===== Modal (bottom sheet) ===== */
+.scrim{position:fixed;inset:0;z-index:80;background:rgba(40,25,15,.5);opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:90;max-height:calc(100dvh - var(--safe-t) - 24px);background:var(--cream);
+  border-radius:26px 26px 0 0;transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.8,.2,1);
+  display:flex;flex-direction:column;overflow:hidden;max-width:620px;margin:0 auto;box-shadow:0 -10px 40px rgba(40,25,15,.25)}
+.sheet.open{transform:none}
+@media (min-width:700px){.sheet{bottom:auto;top:50%;border-radius:26px;transform:translateY(-40%) scale(.96);opacity:0;transition:transform .3s, opacity .3s;max-height:88vh}
+  .sheet.open{transform:translateY(-50%);opacity:1}}
+.sheet-scroll{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(20px + var(--safe-b))}
+.sheet .hero{position:relative;aspect-ratio:16/9;background:var(--foam)}
+.sheet .hero img{width:100%;height:100%;object-fit:cover}
+.grab{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:42px;height:5px;border-radius:3px;background:rgba(253,251,247,.85)}
+.close{position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(253,251,247,.92);color:var(--coffee);
+  display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.close svg{width:18px;height:18px}
+.sh-body{padding:16px 20px 0;padding-left:max(20px, env(safe-area-inset-left,0px));padding-right:max(20px, env(safe-area-inset-right,0px))}
+.sh-kicker{font-size:12px;color:var(--caramel);font-weight:700;letter-spacing:.08em}
+.sh-title{font-family:var(--f-display);font-size:22px;margin:2px 0 0;color:var(--coffee);line-height:1.35;text-wrap:balance}
+.sh-jp{font-size:12.5px;color:var(--ink-soft)}
+.sh-desc{font-size:14px;margin:10px 0 0}
+.blk{margin-top:14px;background:var(--card);border-radius:18px;padding:13px 15px;box-shadow:0 1px 3px rgba(92,64,51,.08)}
+.blk h4{margin:0 0 6px;font-size:13px;letter-spacing:.06em;color:var(--milk);display:flex;align-items:center;gap:7px}
+.blk h4 svg{width:17px;height:17px;color:var(--caramel)}
+.blk p,.blk li{font-size:14px;margin:0}
+.blk ul{margin:0;padding-left:1.1em;display:grid;gap:4px}
+.blk.drive{background:var(--coffee);color:var(--cream)}
+.blk.drive h4{color:rgba(253,251,247,.75)}
+.blk.drive h4 svg{color:var(--caramel)}
+.drive-route{font-family:var(--f-display);font-size:16px;font-weight:700;line-height:1.5}
+.drive-route em{font-style:normal;color:#F2C58F}
+.drive-note{font-size:12px;opacity:.75;margin-top:4px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;min-height:52px;border-radius:16px;
+  background:var(--caramel);color:#fff;text-decoration:none;font-weight:700;font-size:15.5px;letter-spacing:.04em;box-shadow:0 6px 16px rgba(200,130,60,.35)}
+.btn:active{transform:scale(.98)}
+.btn svg{width:20px;height:20px}
+body.lock{overflow:hidden}
+</style>
+</head>
+<body>
+
+<header class="hdr" id="hdr">
+  <div class="hdr-top">
+    <h1 class="hdr-title">輕遊福熊・九州五日</h1>
+    <span class="hdr-sub">2026.11.10 – 11.14</span>
+  </div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="切換天數"></nav>
+</header>
+
+<main id="main">
+  <section class="intro">
+    <h2>神話高千穗、舟遊柳川、旅人電車、童話湯布院</h2>
+    <p>熊本 ➔ 宮崎 ➔ 大分 ➔ 福岡 ➔ 熊本｜點任一卡片看車程、拍照角度與美食解析</p>
+    <div class="flights">
+      <div class="flight"><div class="lbl">去程 11/10（二）</div><div class="no">星宇 JX846</div><div class="t">桃園 07:30 ➔ 熊本 10:35</div></div>
+      <div class="flight"><div class="lbl">回程 11/14（六）</div><div class="no">星宇 JX847</div><div class="t">熊本 11:45 ➔ 桃園 13:25</div></div>
+    </div>
+  </section>
+
+  <div id="days"></div>
+
+  <section class="notes" aria-label="旅遊小提醒">
+    <h2>出發前小提醒</h2>
+    <dl>
+      <dt>時差</dt><dd>日本比台灣快 1 小時</dd>
+      <dt>電壓</dt><dd>100V 雙腳扁插，台灣電器多可直接用</dd>
+      <dt>匯率</dt><dd>1 日圓 ≈ 0.24 新台幣（參考）</dd>
+      <dt>小費</dt><dd>導遊／司機每人每日 NT$300，共 NT$1,500</dd>
+      <dt>行李</dt><dd>托運 23kg × 1 件；行動電源放隨身行李</dd>
+      <dt>禁止</dt><dd>肉製品帶入日本最高罰 100 萬日圓；禁菸房抽菸罰 6 萬日圓起</dd>
+      <dt>急難</dt><dd>旅外國人急難救助 800-0885-0885</dd>
+    </dl>
+    <p class="foot">車程皆為遊覽車／一般路況預估，實際依當日交通與領隊安排為準。<br>圖片為 Unsplash 示意圖。</p>
+  </section>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle" aria-hidden="true">
+  <div class="sheet-scroll" id="sheetScroll">
+    <div class="hero"><img id="shImg" alt=""><span class="grab"></span>
+      <button class="close" id="shClose" aria-label="關閉"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="sh-body" id="shBody"></div>
+  </div>
+</div>
+
+<script>
+const U = id => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=900&q=75`;
+const ICON = {
+  car:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M6 17v2M18 17v2M4 13l2-6h12l2 6v4H4z"/><circle cx="8" cy="14" r=".6" fill="currentColor"/><circle cx="16" cy="14" r=".6" fill="currentColor"/></svg>',
+  walk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M8 12l3-4 3 2 3 1M12 15l-1-5"/></svg>',
+  cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',
+  bowl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 01-18 0zM8 7c0-1 1-1 1-2M12 7c0-1 1-1 1-2M16 7c0-1 1-1 1-2M9 20h6"/></svg>',
+  map:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  bed:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 00-3-3h-7v5"/><circle cx="7" cy="11" r="2"/></svg>',
+  plane:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 13.5L3 11l1.5-1.5 8 1L17 6c1-1 3-1.5 3.5-1s0 2.5-1 3.5l-4.5 4.5 1 8L14.5 22 12 14.5"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>'
+};
+
+/* ============ 行程資料 ============ */
+const DAYS = [
+{ d:1, date:'2026/11/10', md:'11/10', wk:'二', title:'熊本城下町初見',
+  route:'台北 ➔ 熊本機場 ➔ 城彩苑 ➔ 熊本城 ➔ 熊本熊廣場 ➔ 上下通',
+  meals:['在家吃','機上套餐＋城彩苑自理','上下通商店街自理'],
+  items:[
+  { type:'spot', name:'櫻之馬場 城彩苑', jp:'桜の馬場 城彩苑・桜の小路', img:'1760243875137-16143b2761ee', time:'約 11:30',
+    leg:{m:'car', t:'熊本機場出發，車程約 45 分'},
+    desc:'仿江戶時代城下町的街區，23 間小店一字排開。冬季航班提早抵達，午餐就在這裡自由覓食。',
+    drive:{r:['熊本機場','櫻之馬場 城彩苑'], t:'車程約 45 分鐘', n:'走九州道／國道 57 號，中午前車流順暢。'},
+    photo:['從「桜の小路」入口往內拍連排町屋＋暖簾，人物站在石板路中線最有縱深','往熊本城方向抬頭，可把城郭石垣當背景','手拿霜淇淋或糰子的前景特寫，是網路上最常見的打卡構圖'],
+    blog:['いきなり団子：地瓜＋紅豆餡的蒸糰子，熊本代表性點心','馬肉可樂餅：外皮酥、內餡帶甜，邊走邊吃剛好','想先懂熊本城歷史，可進「湧々座」看劇場與展示'],
+    q:'桜の馬場 城彩苑' },
+  { type:'food', name:'城彩苑小吃巡禮', jp:'いきなり団子・馬肉コロッケ', img:'1768162126091-3190821908dd',
+    leg:{m:'walk', t:'城彩苑內步行即達'},
+    desc:'午餐不必坐下來吃一整份，用 2～3 樣在地小吃拼出一餐最划算。',
+    drive:{r:['城彩苑入口','桜の小路各店'], t:'步行 1～3 分鐘', n:'小路長約 100 公尺，店家集中。'},
+    photo:['糰子剝半拍斷面，紅豆與地瓜層次最上相','可樂餅放在竹籤紙袋裡，搭配暖簾背景'],
+    blog:['いきなり団子：熊本方言「いきなり」意指簡單快速，現蒸最好吃','馬肉可樂餅、太平燕（熊本冬粉湯）是在地人推薦的兩樣','冰淇淋口味常有熊本產草莓、晚白柚等季節限定'],
+    q:'桜の小路 熊本' },
+  { type:'spot', name:'熊本城天守閣', jp:'熊本城 天守閣（入內參觀）', img:'1748877640742-d014ad2719a0', time:'約 13:30',
+    leg:{m:'walk', t:'城彩苑步行上坡約 15 分'},
+    desc:'日本三大名城之一。2016 年地震後修復，2021 年天守閣重新開放，這次安排登上天守頂樓眺望熊本市。',
+    drive:{r:['城彩苑','熊本城天守閣'], t:'步行約 15 分鐘', n:'經櫻之馬場入口上坡，有階梯與坡道，建議穿好走的鞋。'},
+    photo:['二之丸廣場：大天守＋小天守同框的經典全景，用廣角橫拍','「武者返し」石垣：貼近石牆斜角仰拍，弧線最明顯','天守 6 樓展望台：往市區方向拍，午後光線柔和'],
+    blog:['天守內部改為新展示館，以影像與模型講解築城與震災復原','開放時間 9:00–17:00（16:30 最後入場），以官方公告為準','秋天銀杏轉黃時，城內「銀杏城」別名最有感'],
+    q:'熊本城 天守閣' },
+  { type:'spot', name:'熊本熊廣場', jp:'くまモンスクエア（鶴屋東館 1F）', img:'1611549873695-a73367e4f96e',
+    leg:{m:'car', t:'車程約 10 分（步行約 20 分）'},
+    desc:'熊本縣「營業部長兼幸福部長」的活動據點，有 360 度舞台、AR 遊戲、FAN\'S HOUSE 與限定商品 BAZAAR。',
+    drive:{r:['熊本城','熊本熊廣場'], t:'車程約 10 分鐘', n:'也可搭路面電車到「水道町」站，下車步行 1 分鐘。'},
+    photo:['部長辦公桌前的座位，是官方設計的拍照點','入口大型立牌與窗外路面電車同框，很有熊本感','表演時段坐前排，用連拍抓互動瞬間'],
+    blog:['登台表演有固定時段，以現場看板當日公告為準','BAZAAR 有廣場限定周邊，熱門款常缺貨，看到喜歡先下手','咖啡區有熊本縣產食材做的甜點'],
+    q:'くまモンスクエア' },
+  { type:'spot', name:'熊本上下通商店街', jp:'上通・下通アーケード', img:'1540959733332-eab4deabeeaf', time:'傍晚',
+    leg:{m:'walk', t:'步行約 3 分'},
+    desc:'熊本市中心最熱鬧的拱廊商店街，藥妝、服飾、雜貨、居酒屋一路排開，下雨也能逛。',
+    drive:{r:['熊本熊廣場','上通／下通'], t:'步行約 3 分鐘', n:'廣場就在上通與下通交界的路口旁。'},
+    photo:['站在拱廊中央往遠處拍，天花板燈帶形成透視線','傍晚 17:30 後招牌亮起，色溫最暖'],
+    blog:['下通藥妝店密集，免稅記得帶護照','上通較文青，有咖啡店與老字號書店','住宿「御宿野乃」就在下通，逛完走回飯店很方便'],
+    q:'下通アーケード 熊本' },
+  { type:'food', name:'勝烈亭 新市街本店', jp:'勝烈亭 新市街本店', img:'1770966666361-b448e634e163', time:'晚餐推薦',
+    leg:{m:'walk', t:'下通步行約 5 分'},
+    desc:'熊本最有名的炸豬排店，自己磨芝麻調醬，白飯、高麗菜絲、味噌湯可以續。',
+    drive:{r:['下通商店街','勝烈亭 新市街本店'], t:'步行約 5 分鐘', n:'晚餐尖峰常排 30–60 分鐘，建議 17:00 前或 20:00 後去。'},
+    photo:['豬排切面朝鏡頭 45 度，旁邊擺芝麻缽','從正上方俯拍整份定食，構圖最完整'],
+    blog:['招牌是鹿兒島六白黑豚的里肌（ロース）與腰內（ヒレ）','先磨芝麻再倒入甜、辣兩種醬汁，自己調比例','想吃清爽一點選腰內，或點小份量'],
+    q:'勝烈亭 新市街本店' },
+  { type:'food', name:'黑亭拉麵 本店', jp:'黒亭 本店', img:'1591325418441-ff678baf78ef', time:'晚餐推薦',
+    leg:{m:'car', t:'計程車約 10 分（電車約 15 分）'},
+    desc:'1957 年創業的熊本拉麵代表，豚骨湯頭配焦香蒜油，是熊本拉麵的標準味道。',
+    drive:{r:['下通','黑亭 本店（二本木）'], t:'計程車約 10 分鐘', n:'或搭路面電車到「二本木口」站，步行約 3 分鐘。'},
+    photo:['拍湯面上的黑蒜油與蛋黃，貼近碗緣低角度拍','店門口白色暖簾與招牌，是熊本拉麵迷必拍'],
+    blog:['招牌「玉子入りラーメン」加了兩顆生蛋黃，戳破拌湯更濃郁','麵是中細直麵，口感偏硬','熊本站附近，可安排在最後一個行程後去'],
+    q:'黒亭 本店 熊本' },
+  { type:'stay', name:'熊本御宿野乃', jp:'Onyado Nono Kumamoto',
+    leg:{m:'walk', t:'回到下通'},
+    desc:'熊本市中央區下通 2-2-20｜天然溫泉大浴場、和風館內。',
+    drive:{r:['上下通商店街','御宿野乃'], t:'步行約 3 分鐘', n:'飯店位於下通商店街旁。'},
+    photo:['館內榻榻米走廊與和風浴衣'],
+    blog:['設有天然溫泉大浴場，逛完街泡湯消除腿痠','系列飯店晚間常提供免費「夜鳴拉麵」，以飯店公告為準','部分飯店不附拖鞋牙刷，請自備'],
+    q:'御宿 野乃 熊本' }
+  ]},
+{ d:2, date:'2026/11/11', md:'11/11', wk:'三', title:'神話峽谷到溫泉鄉',
+  route:'高千穗峽 ➔ 阿蘇神社 ➔ 黑川溫泉 ➔ 別府灣',
+  meals:['飯店內','高千穗御膳（¥2000）','飯店自助料理'],
+  items:[
+  { type:'spot', name:'高千穗峽・真名井瀑布', jp:'高千穂峡・真名井の滝', img:'1657014250814-e93b5fbea5bc', time:'上午',
+    leg:{m:'car', t:'熊本市區出發，車程約 2 小時'},
+    desc:'阿蘇熔岩被五瀨川侵蝕成的 V 字峽谷。17 公尺高的真名井瀑布是日本瀑布百選，11 月中正逢紅葉季。',
+    drive:{r:['熊本市區','高千穗峽'], t:'車程約 2 小時', n:'經國道 57、325 號穿越阿蘇外輪山，山路較彎，易暈車請先吃藥。'},
+    photo:['步道中段的觀景台：瀑布＋峽谷＋小船同框，是明信片角度','御橋附近往下拍，柱狀節理岩壁最清楚','紅葉季把楓葉放前景、瀑布當背景做層次'],
+    blog:['遊步道約 600 公尺～1 公里，有緩坡與階梯','划船需現場或預約，排隊時間長，團體停留時間有限可視情況','神話「天孫降臨」的故鄉，附近有高千穗神社'],
+    q:'真名井の滝' },
+  { type:'food', name:'高千穗御膳料理', jp:'團體午餐 ¥2000', img:'1726880637228-52cb20f7bc7d',
+    leg:{m:'car', t:'車程約 5–10 分'},
+    desc:'團體安排的宮崎山鄉御膳，多樣小缽搭配在地食材。',
+    drive:{r:['高千穗峽','餐廳'], t:'車程約 5–10 分鐘', n:'依領隊安排。'},
+    photo:['整份御膳俯拍，小缽排列最有層次','窗邊座位用自然光拍'],
+    blog:['宮崎山區常見高千穗牛、地雞、山菜與釜炊飯','下午要去黑川吃甜點的話，這餐飯量可以減半'],
+    q:'高千穂 ランチ' },
+  { type:'spot', name:'阿蘇神社・一之宮門前町', jp:'阿蘇神社・一の宮門前町商店街', img:'1627902314049-812a02602d22', time:'中午後',
+    leg:{m:'car', t:'車程約 1 小時 15 分'},
+    desc:'擁有逾兩千年歷史的阿蘇信仰中心。震後修復的樓門已重新開放，門前町有懷舊小店與湧水。',
+    drive:{r:['高千穗峽','阿蘇神社'], t:'車程約 1 小時 15 分鐘', n:'翻越阿蘇外輪山，沿途可看到阿蘇五岳。'},
+    photo:['樓門正面置中拍，門前石燈籠當前景','「緣結之松」：情侶繞行拍照','門前町「水基」湧水點：手接水的特寫'],
+    blog:['門前町的「水基巡禮」，沿路有十幾處湧水可以喝','とり宮的馬肉可樂餅、阿蘇赤牛漢堡是網路熱門小吃','阿蘇神社是全日本約 450 座阿蘇神社的總本社'],
+    q:'阿蘇神社' },
+  { type:'spot', name:'黑川溫泉街散策', jp:'黒川温泉（米其林綠色指南二星）', img:'1759271339366-fd558ca24b2c', time:'下午',
+    leg:{m:'car', t:'車程約 40 分'},
+    desc:'禁止誇張招牌、整條街保有木造溫泉鄉的樣子。街道短而精緻，可以體驗足湯。',
+    drive:{r:['阿蘇神社','黑川溫泉'], t:'車程約 40 分鐘', n:'走瀨之本高原路線，秋季芒草很美。'},
+    photo:['溪畔木造旅館與小橋，從橋上往下游拍','「湯めぐり手形」木牌拿在手上，以溫泉街當背景','地藏堂與苔石階，適合人像'],
+    blog:['入湯手形 ¥1,500 可泡三家露天風呂，時間不夠就泡足湯','パティスリー麓的銅鑼燒、黑川布丁是人氣伴手禮','11 月中旬山區氣溫低，記得帶外套'],
+    q:'黒川温泉' },
+  { type:'stay', name:'別府灣美爵水療度假酒店', jp:'Mercure Beppu Bay Resort & Spa', img:'1723525633352-fcfc71808660',
+    leg:{m:'car', t:'車程約 1 小時 40 分'},
+    desc:'大分縣速見郡日出町平道入江 1825｜面向別府灣的度假酒店，晚餐為館內自助料理。',
+    drive:{r:['黑川溫泉','別府灣美爵水療度假酒店'], t:'車程約 1 小時 40 分鐘', n:'走大分道往日出町方向。'},
+    photo:['傍晚到露天溫泉或海景區拍別府灣夕色','房間陽台的海景，清晨也很美'],
+    blog:['晚餐自助：大分名物關鳥(關あじ／關さば)、とり天（雞肉天婦羅）、豐後牛有機會出現','自助餐先拿蔬菜、蛋白質，最後才拿主食和甜點，比較不容易吃過量'],
+    q:'メルキュール 別府湾 リゾート' }
+  ]},
+{ d:3, date:'2026/11/12', md:'11/12', wk:'四', title:'童話湯布院到福岡夜色',
+  route:'湯布院 ➔ 金鱗湖 ➔ 免稅店 ➔ LaLaport 福岡 ➔ 中洲／博多',
+  meals:['飯店內','蒸籠料理（¥2000）','天神／博多自理'],
+  items:[
+  { type:'spot', name:'湯布院 湯之坪街道', jp:'由布院 湯の坪街道', img:'1624517608599-7ee67458a3da', time:'上午',
+    leg:{m:'car', t:'飯店出發，車程約 40 分'},
+    desc:'由布岳山腳下的藝術小鎮，木雕、陶藝、玻璃工藝店與甜點鋪沿路排列。',
+    drive:{r:['別府灣美爵','湯布院'], t:'車程約 40 分鐘', n:'越過山路後看到由布岳雙峰就快到了。'},
+    photo:['在街道中段回頭拍：由布岳雙峰＋街屋同框','玻璃之森、雜貨小店窗邊適合拍人像','早上人少，10 點前最好拍'],
+    blog:['金賞可樂餅（湯布院金賞コロッケ）：牛肉可樂餅得獎款','Milch 半熟起司蛋糕：熱的、冷的兩種都有','B-speak 蛋糕捲：下午茶首選，見下方美食卡'],
+    q:'湯の坪街道' },
+  { type:'spot', name:'史努比茶屋', jp:'スヌーピー茶屋 由布院店', img:'1760243875212-ebaaf3126fb8',
+    leg:{m:'walk', t:'湯之坪街道上，步行即達'},
+    desc:'全日本第一家日式風格的史努比專賣店與茶屋，有和風甜點與限定周邊。',
+    drive:{r:['湯之坪街道','史努比茶屋'], t:'步行約 5 分鐘', n:'位於湯之坪街道中段。'},
+    photo:['店門口和風造型立像是排隊熱點，早到先拍','甜點上桌後側光拍，拉花與造型最立體'],
+    blog:['茶屋內用常要排隊，時間不夠可買外帶麵包或周邊','和風主題的抹茶甜點、聖代是人氣款','由布院店有地區限定商品'],
+    q:'スヌーピー茶屋 由布院店' },
+  { type:'spot', name:'金鱗湖', jp:'金鱗湖', img:'1624517608532-c6cd07c012eb',
+    leg:{m:'walk', t:'步行約 10 分'},
+    desc:'溫泉與泉水匯流成的湖，冬天湖面也冒著熱氣，是湯布院晨霧的來源。',
+    drive:{r:['湯之坪街道底端','金鱗湖'], t:'步行約 10 分鐘', n:'沿街道一路走到底即達。'},
+    photo:['湖畔的「天祖神社」鳥居立在水中，與倒影一起拍','11 月早晨溫差大，湖面起霧時用逆光拍最夢幻','湖畔咖啡店二樓窗邊可俯瞰湖景'],
+    blog:['與謝野晶子、北原白秋都曾為這片風景著迷','繞湖一圈約 10 分鐘，地面濕滑請小心'],
+    q:'金鱗湖' },
+  { type:'food', name:'B-speak 蛋糕捲', jp:'B-speak P ロール', img:'1760136874870-701b323169ed', time:'下午茶推薦',
+    leg:{m:'walk', t:'湯之坪街道入口附近'},
+    desc:'湯布院最有名的蛋糕捲，蛋糕體綿密、鮮奶油輕盈，常常下午就賣完。',
+    drive:{r:['湯之坪街道','B-speak'], t:'步行約 3 分鐘', n:'在 由布院玉の湯 旁，靠近街道入口。'},
+    photo:['切片斷面朝鏡頭，白色鮮奶油與蛋糕體對比最上相','拿著紙盒在湯布院街道拍'],
+    blog:['招牌 P ロール有原味和巧克力，可買切片','建議一到湯布院先去買，晚到常售罄','保存期限短，當天吃完；吃甜點那餐可減少正餐澱粉'],
+    q:'B-speak 由布院' },
+  { type:'food', name:'蒸籠料理', jp:'團體午餐 ¥2000', img:'1569912815867-5580004c13a2',
+    leg:{m:'walk', t:'依領隊安排'},
+    desc:'團體午餐，用蒸籠蒸出食材原味的大分料理。',
+    drive:{r:['湯布院','餐廳'], t:'依領隊安排', n:''},
+    photo:['掀蓋瞬間的蒸氣是重點，請同伴幫忙掀蓋連拍'],
+    blog:['蒸籠料理少油，蛋白質＋蔬菜比例高','如果下午吃了蛋糕捲，可以少吃一點飯'],
+    q:'由布院 せいろ蒸し' },
+  { type:'spot', name:'免稅店', jp:'團體安排', img:'1666321254972-56e21f1fc10d', mini:true, icon:'info',
+    leg:{m:'car', t:'依領隊安排'},
+    desc:'團體安排的購物停留。',
+    drive:{r:['湯布院','免稅店'], t:'依領隊安排', n:''},
+    photo:['—'], blog:['藥妝與零食比價後再買，記得帶護照'], q:'' },
+  { type:'spot', name:'LaLaport 福岡 & 1:1 鋼彈', jp:'ららぽーと福岡・実物大ν鋼彈', img:'1734851489355-995d689a5449', time:'下午',
+    leg:{m:'car', t:'車程約 1 小時 50 分'},
+    desc:'2022 年開幕的大型商場，正門前是約 25 公尺高的實物大 ν 鋼彈立像，還有 KidZania、玩具美術館與美食街。',
+    drive:{r:['湯布院','LaLaport 福岡'], t:'車程約 1 小時 50 分鐘', n:'不含免稅店停留時間；走大分道轉九州道。'},
+    photo:['站在正門廣場正前方，手機橫拿、超廣角仰拍才能入鏡全身','傍晚以後有燈光演出，天色暗下時拍最有氣氛','從商場 2 樓平台可以拍到與鋼彈視線等高的角度'],
+    blog:['立像旁的「GUNDAM SIDE-F」有限定鋼普拉','演出每天有固定場次，以官網公告為準','美食街與超市可順便買晚上的飲料和水果'],
+    q:'ららぽーと福岡' },
+  { type:'spot', name:'博多・天神自由逛街', jp:'中洲・博多運河城', img:'1605088298038-2876387a80c1', time:'晚間',
+    leg:{m:'car', t:'車程約 20 分'},
+    desc:'晚上自由活動：中洲沿著那珂川的屋台燈火，或去博多運河城、天神地下街逛街。',
+    drive:{r:['LaLaport 福岡','中洲'], t:'車程約 20 分鐘', n:'計程車約 ¥2,000 上下；地鐵可到「中洲川端」站。'},
+    photo:['那珂川對岸拍屋台燈籠與水面倒影','福博であい橋上拍中洲霓虹'],
+    blog:['天神地下街適合下雨天逛','博多運河城有大型噴水表演，整點左右可看'],
+    q:'中洲 屋台' },
+  { type:'food', name:'中洲屋台', jp:'中洲屋台街', img:'1749894274841-95fa78941841', time:'晚餐推薦',
+    leg:{m:'walk', t:'中洲河畔步行即達'},
+    desc:'福岡的招牌夜景：河邊一整排路邊攤，豚骨拉麵、關東煮、烤雞串，肩併肩吃最有味道。',
+    drive:{r:['中洲川端站','那珂川沿岸屋台'], t:'步行約 5 分鐘', n:'屋台大約 18:00 後陸續開，雨天可能休息。'},
+    photo:['在屋台外拍暖簾與紅燈籠，人影剪影最有氛圍','拉麵、關東煮上桌時用手機夜間模式拍'],
+    blog:['一攤只有 8～10 個座位，人多可分散排','建議帶現金、每人至少點一份餐','人氣品項：豚骨拉麵、明太子玉子燒、烤雞皮、關東煮'],
+    q:'中洲屋台' },
+  { type:'food', name:'一蘭拉麵 總本店', jp:'一蘭 本社総本店', img:'1734313276354-75c96b3c0c36', time:'晚餐推薦',
+    leg:{m:'walk', t:'步行約 5 分'},
+    desc:'一蘭的總本店，24 小時營業，有總本店限定的方形重箱碗拉麵。',
+    drive:{r:['中洲屋台','一蘭 總本店'], t:'步行約 5 分鐘', n:'位於中洲，靠近櫛田神社方向。'},
+    photo:['店外紅色大招牌是必拍，晚上最亮','重箱碗打開的瞬間俯拍'],
+    blog:['總本店限定「釜だれとんこつ」用方形重箱盛裝','點餐單可選湯濃度、蒜量、辣度、麵硬度','宵夜時段人較少'],
+    q:'一蘭 本社総本店' },
+  { type:'stay', name:'The 358 UMI', jp:'福岡市東區香椎照葉 6-6-5',
+    leg:{m:'car', t:'車程約 25 分'},
+    desc:'福岡市東區香椎照葉 6-6-5｜位於海邊新市鎮的飯店。',
+    drive:{r:['中洲／天神','The 358 UMI'], t:'車程約 25 分鐘', n:'自由活動後若自行返回，建議搭計程車。'},
+    photo:['早晨飯店周邊的海濱步道'],
+    blog:['自由活動結束時間請與領隊確認，記得帶飯店名片'],
+    q:'The 358 UMI 福岡' }
+  ]},
+{ d:4, date:'2026/11/13', md:'11/13', wk:'五', title:'學問之神與水鄉柳川',
+  route:'旅人電車 ➔ 太宰府天滿宮 ➔ 柳川搖櫓船 ➔ 熊本',
+  meals:['飯店內','柳川鰻魚料理（¥2000）','熊本市區自理'],
+  items:[
+  { type:'spot', name:'太宰府旅人電車', jp:'西鉄 旅人（二日市 ⇄ 太宰府）', img:'1619548502610-31b558c8e0fe', time:'上午',
+    leg:{m:'car', t:'飯店出發，車程約 40 分'},
+    desc:'外觀畫著太宰府景點、車廂內分六種開運主題（學業、健康、除厄、安產、家庭、良緣）的觀光列車。',
+    drive:{r:['The 358 UMI','西鐵二日市站'], t:'車程約 40 分鐘', n:'二日市 ➔ 太宰府 搭電車約 5 分鐘。若電車停駛改搭巴士，並贈送梅枝餅。'},
+    photo:['月台上拍車頭「旅人」標誌與彩繪車身','找自己想祈願的主題車廂，坐窗邊拍車內圖樣'],
+    blog:['六個車廂各代表一種願望，可以挑自己想要的坐','二日市站轉乘時間短，跟緊領隊'],
+    q:'西鉄二日市駅' },
+  { type:'spot', name:'太宰府天滿宮', jp:'太宰府天満宮', img:'1754211190259-efa4206b368c',
+    leg:{m:'walk', t:'太宰府站步行約 5 分'},
+    desc:'祭祀學問之神菅原道真的全國天滿宮總本宮。御本殿整修期間設有屋頂長滿植栽的「臨時本殿」。',
+    drive:{r:['西鐵太宰府站','太宰府天滿宮'], t:'步行約 5 分鐘', n:'沿表參道直走即達。'},
+    photo:['心字池上的太鼓橋：過去、現在、未來三座橋，從側面拍弧線','臨時本殿屋頂的森林造型，仰拍最特別','參道上的「御神牛」：摸牛頭據說會變聰明'],
+    blog:['御本殿於 2023 年起整修約三年，完工日期以官網為準','必吃梅枝餅：外皮酥脆、紅豆餡熱騰騰，團體有贈送','參拜後可求學業御守，送考生很適合'],
+    q:'太宰府天満宮' },
+  { type:'spot', name:'隈研吾設計 星巴克', jp:'スターバックス 太宰府天満宮表参道店', img:'1760243875503-e6a689f4f5a8',
+    leg:{m:'walk', t:'表參道上，步行約 3 分'},
+    desc:'建築師隈研吾設計，約 2,000 根杉木條交錯編成的天花板，被稱為日本最美星巴克之一。',
+    drive:{r:['太宰府站','星巴克 表參道店'], t:'步行約 3 分鐘', n:'就在往天滿宮的表參道上。'},
+    photo:['站在入口往店內縱深拍，木條隧道的透視最驚人','從外面拍門口，木條延伸出屋簷的立面','人少時蹲低仰拍天花板'],
+    blog:['店內人多，想拍空景建議一開門就到','有時推出太宰府地區限定的隨行杯或卡片'],
+    q:'スターバックス 太宰府天満宮表参道店' },
+  { type:'spot', name:'柳川搖櫓船', jp:'柳川川下り', img:'1695231665900-20e188033ed8', time:'中午',
+    leg:{m:'car', t:'車程約 50 分'},
+    desc:'坐在船伕撐篙的小船上穿過柳樹、紅磚與石橋，船伕會哼唱傳統民謠。詩人北原白秋的故鄉。',
+    drive:{r:['太宰府天滿宮','柳川搖櫓船乘船處'], t:'車程約 50 分鐘', n:'乘船時間約 60–70 分鐘。'},
+    photo:['船過低矮石橋時大家一起低頭，是最有趣的連拍瞬間','坐船尾往前拍船伕背影與兩岸柳樹','岸邊北原白秋故居一帶的紅磚倉庫'],
+    blog:['船伕途中會唱柳川民謠、講解兩岸景點','船上沒有遮蔽，11 月中風大，帶件外套','坐船前先上廁所'],
+    q:'柳川 川下り' },
+  { type:'food', name:'柳川蒸籠鰻魚飯', jp:'うなぎのせいろ蒸し（¥2000）', img:'1778327564817-410003989323',
+    leg:{m:'walk', t:'下船後步行'},
+    desc:'柳川名物：白飯先拌醬汁，再和鰻魚、錦糸蛋一起放進蒸籠蒸，飯粒吸滿醬香。',
+    drive:{r:['柳川下船處','鰻魚料理店'], t:'步行約 5 分鐘', n:'依領隊安排。'},
+    photo:['掀開蒸籠蓋的瞬間：金黃錦糸蛋＋鰻魚＋蒸氣','用木匙挖起一口，拍飯粒吸醬汁的斷面'],
+    blog:['和關東的鰻重不同，柳川是「整碗一起蒸」，口感更軟、更入味','醬汁偏甜，配附的肝吸湯（鰻魚肝清湯）剛好','蒸籠飯量偏多，飯可以留一些'],
+    q:'柳川 うなぎ せいろ蒸し' },
+  { type:'food', name:'熊本馬肉料理', jp:'馬刺し（菅乃屋 等）', img:'1786301422464-e1bd0b9bde7c', time:'晚餐推薦',
+    leg:{m:'car', t:'柳川返回熊本，車程約 1 小時 30 分'},
+    desc:'熊本最具代表性的鄉土料理。馬肉高蛋白、低脂，生吃（馬刺）是最經典的吃法。',
+    drive:{r:['柳川','熊本市區'], t:'車程約 1 小時 30 分鐘', n:'回到飯店後，到上通、下通一帶步行約 10 分鐘。'},
+    photo:['霜降、赤身、鬃毛（たてがみ）拼盤，用黑盤子拍顏色對比','沾甜醬油＋薑泥＋蒜片的動作特寫'],
+    blog:['「菅乃屋」是熊本知名的馬肉專賣，自家牧場直營','推薦點綜合拼盤一次吃到霜降、赤身與鬃毛','赤身瘦肉蛋白質高，正在控制飲食也很適合'],
+    q:'菅乃屋 上通店' },
+  { type:'food', name:'桂花拉麵 本店', jp:'桂花ラーメン 本店', img:'1694708455249-992010f9db32', time:'晚餐推薦',
+    leg:{m:'walk', t:'飯店步行約 10 分'},
+    desc:'1955 年創業的熊本拉麵老店，招牌「太肉麵」大塊滷五花配生高麗菜。',
+    drive:{r:['熊本格利茲酒店','桂花拉麵 本店（新市街）'], t:'步行約 10 分鐘', n:'位於新市街拱廊附近。'},
+    photo:['夾起一大塊太肉（ターロー）對著鏡頭','俯拍碗內：生高麗菜、蒜酥、黑木耳的配色'],
+    blog:['「太肉麵（ターロー麺）」是招牌，五花肉滷得軟嫩','湯頭是豚骨加雞骨，再淋上焦蒜油','和黑亭比較，桂花口味更濃、蒜香更明顯'],
+    q:'桂花ラーメン 本店' },
+  { type:'stay', name:'熊本格利茲酒店', jp:'熊本市中央區紺屋今町 1-7',
+    leg:{m:'walk', t:'回飯店'},
+    desc:'熊本市中央區紺屋今町 1-7｜鄰近辛島町與新市街，逛街吃宵夜方便。',
+    drive:{r:['新市街','熊本格利茲酒店'], t:'步行約 10 分鐘', n:''},
+    photo:['—'],
+    blog:['隔天一早出發去機場，前一晚把行李整理好'],
+    q:'熊本市中央区紺屋今町1-7' }
+  ]},
+{ d:5, date:'2026/11/14', md:'11/14', wk:'六', title:'機場最後採購，回家',
+  route:'飯店 ➔ 阿蘇熊本機場 ➔ 台北',
+  meals:['—','機上簡餐','在家吃'],
+  items:[
+  { type:'spot', name:'阿蘇熊本機場商店街', jp:'阿蘇くまもと空港', img:'1666321254972-56e21f1fc10d', time:'上午',
+    leg:{m:'car', t:'飯店出發，車程約 50 分'},
+    desc:'2023 年啟用的新航廈，商店街有熊本伴手禮、熊本熊周邊與在地酒，最後採購的好地方。',
+    drive:{r:['熊本格利茲酒店','阿蘇熊本機場'], t:'車程約 50 分鐘', n:'航班 11:45 起飛，約 09:00–09:30 抵達機場辦理報到。'},
+    photo:['航廈內的大型裝置與熊本熊看板','落地窗邊拍星宇機身'],
+    blog:['伴手禮推薦：誉の陣太鼓（紅豆求肥點心）、いきなり団子、馬油','熊本熊周邊在機場也很齊全，前幾天沒買到可以補','液體類伴手禮要放托運行李'],
+    q:'阿蘇くまもと空港' },
+  { type:'spot', name:'星宇 JX847 返回台北', jp:'熊本 11:45 ➔ 桃園 13:25', img:'1664188570581-253cb28115e9',
+    leg:{m:'walk', t:'登機'},
+    desc:'飛行時間約 2 小時 40 分，回到甜蜜溫暖的家。',
+    drive:{r:['阿蘇熊本機場','台灣桃園機場'], t:'飛行約 2 小時 40 分鐘', n:'回到台灣時間 13:25（台灣比日本慢 1 小時）。'},
+    photo:['起飛後靠右側窗，有機會看到阿蘇山'],
+    blog:['機上簡餐，回家前可先在機場吃點東西'],
+    q:'阿蘇くまもと空港' }
+  ]}
+];
+
+/* ============ Render ============ */
+const tabsEl = document.getElementById('tabs');
+const daysEl = document.getElementById('days');
+const ALL = [];
+const twToday = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei'}).format(new Date()).replace(/-/g,'/');
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TAG = {spot:'景點', food:'美食', stay:'住宿'};
+
+DAYS.forEach(day => {
+  const isToday = day.date === twToday;
+  tabsEl.insertAdjacentHTML('beforeend',
+    `<button class="tab" role="tab" id="tab-${day.d}" aria-controls="day-${day.d}" data-d="${day.d}" aria-selected="false">
+       ${isToday?'<span class="today">今天</span>':''}<b>Day ${day.d}</b><small>${day.md}</small></button>`);
+
+  let h = `<section class="day" id="day-${day.d}" aria-labelledby="dt-${day.d}">
+    <div class="day-head">
+      <div class="day-num"><small>DAY</small><b>${String(day.d).padStart(2,'0')}</b></div>
+      <div class="day-meta">
+        <div class="day-date">${day.date}（${day.wk}）${isToday?' ・ 今天':''}</div>
+        <h2 class="day-title" id="dt-${day.d}">${esc(day.title)}</h2>
+        <div class="route">${esc(day.route)}</div>
+      </div>
+    </div>
+    <div class="meals">
+      <div class="meal"><span>早餐</span><p>${esc(day.meals[0])}</p></div>
+      <div class="meal"><span>午餐</span><p>${esc(day.meals[1])}</p></div>
+      <div class="meal"><span>晚餐</span><p>${esc(day.meals[2])}</p></div>
+    </div>
+    <div class="tl">`;
+
+  day.items.forEach(it => {
+    const idx = ALL.push({...it, day}) - 1;
+    h += `<div class="leg"><span class="pill">${ICON[it.leg.m]}${esc(it.leg.t)}</span></div>`;
+    if (it.mini || (it.type==='stay' && !it.img)) {
+      h += `<button class="card mini" data-i="${idx}">
+        <span class="ico">${ICON[it.type==='stay'?'bed':(it.icon||'info')]}</span>
+        <span class="cb"><h3>${esc(it.name)}</h3><p>${esc(it.desc)}</p></span></button>`;
+    } else {
+      h += `<button class="card" data-i="${idx}">
+        <div class="ph"><img loading="lazy" src="${U(it.img)}" alt="${esc(it.name)} 示意圖" onerror="this.remove()">
+          <span class="tag ${it.type}">${TAG[it.type]}</span>${it.time?`<span class="time">${esc(it.time)}</span>`:''}</div>
+        <div class="cb"><h3>${esc(it.name)}</h3><div class="jp">${esc(it.jp)}</div>
+          <p>${esc(it.desc)}</p><div class="more">車程・拍照・推薦 ${ICON.arrow}</div></div></button>`;
+    }
+  });
+  h += `</div></section>`;
+  daysEl.insertAdjacentHTML('beforeend', h);
+});
+
+/* header height → padding */
+const hdr = document.getElementById('hdr');
+const setH = () => document.documentElement.style.setProperty('--hdr', hdr.offsetHeight + 'px');
+setH(); new ResizeObserver(setH).observe(hdr); addEventListener('orientationchange', ()=>setTimeout(setH,300));
+
+/* tabs */
+const tabs = [...tabsEl.querySelectorAll('.tab')];
+let lock = false, lockT;
+function setActive(d){ tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.d==d ? 'true':'false')); }
+tabs.forEach(t => t.addEventListener('click', () => {
+  const sec = document.getElementById('day-'+t.dataset.d);
+  setActive(t.dataset.d); lock = true; clearTimeout(lockT); lockT = setTimeout(()=>lock=false, 900);
+  const y = sec.getBoundingClientRect().top + scrollY - hdr.offsetHeight - 6;
+  scrollTo({top:y, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto':'smooth'});
+  try{ history.replaceState(null,'','#day-'+t.dataset.d) }catch(e){}
+}));
+/* scroll spy */
+const secs = DAYS.map(d => document.getElementById('day-'+d.d));
+function spy(){
+  if (lock) return;
+  const line = hdr.offsetHeight + innerHeight*0.25;
+  let cur = 1;
+  secs.forEach((s,i) => { if (s.getBoundingClientRect().top <= line) cur = i+1; });
+  setActive(cur);
+}
+addEventListener('scroll', () => requestAnimationFrame(spy), {passive:true});
+spy();
+/* open to hash or today */
+const todayDay = DAYS.find(d => d.date === twToday);
+const startHash = location.hash.match(/^#day-(\d)$/);
+if (startHash || todayDay) {
+  const n = startHash ? startHash[1] : todayDay.d;
+  if (n != 1) setTimeout(() => document.getElementById('tab-'+n)?.click(), 200);
+}
+
+/* modal */
+const sheet = document.getElementById('sheet'), scrim = document.getElementById('scrim');
+const shImg = document.getElementById('shImg'); shImg.onerror = () => { shImg.style.display='none'; }; const shBody = document.getElementById('shBody');
+let lastFocus = null;
+function openItem(i){
+  const it = ALL[i];
+  shImg.style.display = '';
+  shImg.src = it.img ? U(it.img).replace('w=900','w=1200') : '';
+  if (!it.img) shImg.style.display='none';
+  shImg.alt = it.name + ' 示意圖';
+  const mapsUrl = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=' + encodeURIComponent(it.q || it.name);
+  const list = arr => arr.filter(x=>x && x!=='—').map(x=>`<li>${esc(x)}</li>`).join('');
+  const isFood = it.type === 'food';
+  shBody.innerHTML = `
+    <div class="sh-kicker">DAY ${it.day.d} ・ ${it.day.md}（${it.day.wk}）・ ${TAG[it.type]}</div>
+    <h3 class="sh-title" id="shTitle">${esc(it.name)}</h3>
+    <div class="sh-jp">${esc(it.jp)}</div>
+    <p class="sh-desc">${esc(it.desc)}</p>
+    <div class="blk drive"><h4>${ICON[it.leg.m]}交通預估</h4>
+      <div class="drive-route">${esc(it.drive.r[0])} ➔ ${esc(it.drive.r[1])}，<em>${esc(it.drive.t)}</em></div>
+      ${it.drive.n?`<div class="drive-note">${esc(it.drive.n)}</div>`:''}</div>
+    ${list(it.photo) ? `<div class="blk"><h4>${ICON.cam}必拍角度／私房視角</h4><ul>${list(it.photo)}</ul></div>`:''}
+    <div class="blk"><h4>${ICON[isFood?'bowl':'star']}${isFood?'必吃特色解析':'網路推薦重點'}</h4><ul>${list(it.blog)}</ul></div>
+    ${it.q ? `<a class="btn" href="${mapsUrl}" target="_blank" rel="noopener">${ICON.map}用 Google Maps 導航</a>`:''}`;
+  document.getElementById('sheetScroll').scrollTop = 0;
+  lastFocus = document.activeElement;
+  sheet.classList.add('open'); scrim.classList.add('open'); sheet.setAttribute('aria-hidden','false');
+  document.body.classList.add('lock');
+  setTimeout(()=>document.getElementById('shClose').focus({preventScroll:true}), 50);
+}
+function closeSheet(){
+  sheet.classList.remove('open'); scrim.classList.remove('open'); sheet.setAttribute('aria-hidden','true');
+  document.body.classList.remove('lock'); lastFocus && lastFocus.focus({preventScroll:true});
+}
+daysEl.addEventListener('click', e => { const c = e.target.closest('.card'); if (c) openItem(+c.dataset.i); });
+scrim.addEventListener('click', closeSheet);
+document.getElementById('shClose').addEventListener('click', closeSheet);
+addEventListener('keydown', e => { if (e.key==='Escape' && sheet.classList.contains('open')) closeSheet(); });
+/* swipe down to close */
+let sy=null;
+sheet.addEventListener('touchstart', e => { if (document.getElementById('sheetScroll').scrollTop<=0) sy = e.touches[0].clientY; }, {passive:true});
+sheet.addEventListener('touchmove', e => { if (sy===null) return; const dy = e.touches[0].clientY - sy; if (dy>0) sheet.style.transform = `translateY(${dy}px)`; }, {passive:true});
+sheet.addEventListener('touchend', e => { if (sy===null) return; const dy = e.changedTouches[0].clientY - sy; sheet.style.transform=''; sy=null; if (dy>110) closeSheet(); });
+</script>
+</body>
+</html>
