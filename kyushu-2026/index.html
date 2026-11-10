@@ -103,6 +103,9 @@ h2.vt{font-family:var(--f-display);font-size:21px;color:var(--coffee);margin:0 0
 .tag{position:absolute;left:12px;top:12px;font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:20px;background:rgba(253,251,247,.92);color:var(--coffee)}
 .tag.food{background:var(--caramel);color:#fff}
 .tag.stay{background:var(--coffee);color:var(--cream)}
+.cap{position:absolute;left:0;right:0;bottom:0;padding:16px 12px 7px;font-size:11px;color:#fff;background:linear-gradient(transparent,rgba(30,18,10,.65));display:flex;align-items:center;gap:4px}
+.cap svg{width:12px;height:12px;flex:none}
+.credit{font-size:11px;color:var(--ink-soft);margin-top:6px}
 .time{position:absolute;right:12px;top:12px;font-size:11px;padding:4px 9px;border-radius:20px;background:rgba(59,42,32,.72);color:var(--cream)}
 .cb{padding:13px 16px 15px}
 .cb h3{margin:0;font-family:var(--f-display);font-size:17px;line-height:1.4;color:var(--coffee)}
@@ -256,7 +259,7 @@ body.lock{overflow:hidden}
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-const U = (id,w=900) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=75`;
+const U = (id,w=900) => id.startsWith('wm:') ? `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(id.slice(3))}?width=${w}` : `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=75`;
 const ICON = {
   car:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M6 17v2M18 17v2M4 13l2-6h12l2 6v4H4z"/></svg>',
   walk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M8 12l3-4 3 2 3 1M12 15l-1-5"/></svg>',
@@ -541,6 +544,31 @@ const DAYS = [
   ]}
 ];
 
+
+/* ============ 照片核對：每張都確認拍攝地點（cap = 照片實際內容） ============ */
+const PHOTO = {
+ '櫻之馬場 城彩苑':{img:'wm:Sakuranobaba-johsaien , 桜の馬場城彩苑 - panoramio.jpg', cap:'實景：櫻之馬場 城彩苑', credit:'z tanuki／CC BY 3.0'},
+ '熊本城天守閣':{img:'1748877640843-41295829da3f', cap:'實景：熊本城本丸', credit:'Luo Jin Hong／Unsplash'},
+ '熊本熊廣場':{img:'wm:Tsuruya Department Store01s55s3200.jpg', cap:'鶴屋百貨店外觀（熊本熊廣場在東館 1F）', credit:'663highland／CC BY 2.5'},
+ '熊本上下通商店街':{img:'wm:Shimotori ac (1).jpg', cap:'實景：熊本下通拱廊', credit:'Asturio Cantabrio／CC BY-SA 4.0'},
+ '高千穗峽・真名井瀑布':{img:'wm:Takachiho Gorge by boat.jpg', cap:'實景：高千穗峽 真名井瀑布', credit:'Max Smith／Public domain'},
+ '阿蘇神社・一之宮門前町':{img:'wm:Aso Shrine Torii.jpg', cap:'實景：阿蘇神社', credit:'Immanuelle／CC BY 4.0'},
+ '黑川溫泉街散策':{img:'1706017594753-e8b87f20433e', cap:'實景：黑川溫泉', credit:'Nichika Sakurai／Unsplash'},
+ '別府灣美爵水療度假酒店':{img:'1624517607060-b0bfafdb19a9', cap:'別府溫泉地獄蒸氣（非飯店本身）', credit:'Unsplash'},
+ '湯布院 湯之坪街道':{img:'1624517608599-7ee67458a3da', cap:'實景：湯布院街道與由布岳', credit:'Tayawee Supan／Unsplash'},
+ '史努比茶屋':{img:'1760243875175-064c835a0b40', cap:'湯布院街景（非茶屋本身）', credit:'PJH／Unsplash'},
+ '金鱗湖':{img:'1624517608532-c6cd07c012eb', cap:'實景：金鱗湖', credit:'Tayawee Supan／Unsplash'},
+ 'LaLaport 福岡 & 1:1 鋼彈':{img:'1694864255426-995cb59aac98', cap:'實景：LaLaport 福岡前的 ν 鋼彈', credit:'Seongjin Park／Unsplash'},
+ '博多・天神自由逛街':{img:'1605088298038-2876387a80c1', cap:'實景：福岡那珂川夜景', credit:'Alexander Schimmeck／Unsplash'},
+ '太宰府旅人電車':{img:'wm:西日本鉄道太宰府観光列車旅人.jpg', cap:'實景：西鐵觀光列車「旅人」', credit:'ぬさく／CC0'},
+ '太宰府天滿宮':{img:'1754211190259-efa4206b368c', cap:'實景：太宰府天滿宮', credit:'Roméo A.／Unsplash'},
+ '隈研吾設計 星巴克':{img:'1557747243-b8efd4adb52e', cap:'實景：太宰府表參道星巴克木構天花板', credit:'Unsplash'},
+ '柳川搖櫓船':{img:'wm:Yanagawa-kawakudari.jpg', cap:'實景：柳川川下り', credit:'みんと／Public domain'},
+ '阿蘇熊本機場商店街':{img:'wm:Kumamoto Airport 2023.JPG', cap:'實景：阿蘇熊本機場新航廈', credit:'hyolee2／CC BY-SA 4.0'},
+ '星宇 JX847 返回台北':{img:'wm:STARLUX A321neo RCTP.jpg', cap:'星宇航空 A321neo（機型以當天為準）', credit:'Oldwang keelung／CC BY-SA 4.0'}
+};
+DAYS.forEach(d => d.items.forEach(it => { const ph = PHOTO[it.name]; if (ph) Object.assign(it, ph); }));
+
 /* 官方行程內容（摘自行程手冊 PDF） */
 const OFFICIAL = {
  1:{ text:['台北／熊本空港（贈送礦泉水一瓶）→ 桜の馬場．城彩苑．桜の小路 ～ 日本三大名城之熊本城 ～ 熊本天守閣 → 熊本熊廣場 → 熊本上下街商店街。',
@@ -643,6 +671,7 @@ const FOOD = [
    photo:['夾起太肉對著鏡頭','俯拍碗內：高麗菜綠、蒜油黑的配色'],
    q:'桂花ラーメン 本店', ig:'桂花ラーメン', th:'桂花拉麵 熊本' }
 ];
+FOOD.forEach(f => { f.cap = f.name==='中洲屋台街' ? '實景：福岡屋台' : '料理示意圖（非店家實拍）'; });
 const GROUP_MEALS = [
  {d:2, name:'高千穗御膳料理（¥2000）'}, {d:3, name:'湯布院 蒸籠料理（¥2000）'}, {d:4, name:'柳川蒸籠鰻魚飯（¥2000）'}
 ];
@@ -668,7 +697,7 @@ const navUrl = q => 'https://www.google.com/maps/dir/?api=1&travelmode=driving&d
 const searchUrl = q => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
 const ALL = [];
 DAYS.forEach(day => day.items.forEach(it => { it.day = day; it.i = ALL.push(it) - 1; }));
-const imgTag = (it,w) => `<img loading="lazy" src="${U(it.img,w)}" alt="${esc(it.name)} 示意圖" onerror="this.remove()">`;
+const imgTag = (it,w) => `<img loading="lazy" src="${U(it.img,w)}" alt="${esc(it.cap||it.name)}" onerror="this.remove()">${it.cap?`<span class="cap">${ICON.map}${esc(it.cap)}</span>`:''}`;
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('show'),1800); }
 
 /* ============ state ============ */
@@ -760,7 +789,7 @@ function openFood(k){
   shImg.style.display=''; shImg.src = U(f.img,1200); shImg.alt = f.name + ' 示意圖';
   shBody.innerHTML = `
     <div class="sh-kicker">DAY ${f.d} ・ ${day.md}（${day.wk}）・ ${esc(f.area)} ・ 自理</div>
-    <h3 class="sh-title" id="shTitle">${esc(f.name)}</h3><div class="jp">${esc(f.jp)}</div>
+    <h3 class="sh-title" id="shTitle">${esc(f.name)}</h3><div class="jp">${esc(f.jp)}</div><div class="credit">照片：${esc(f.cap)}</div>
     <p class="sh-desc"><b style="color:var(--caramel)">必吃</b>　${esc(f.tag)}</p>
     ${f.warn?`<div class="warn" style="margin-top:12px">${ICON.info}<span>${esc(f.warn)}</span></div>`:''}
     <div class="blk drive"><h4>${ICON.walk}怎麼去</h4><div class="drive-route" style="font-size:15px">${esc(f.from)}</div><div class="drive-note">${esc(f.info)}</div></div>
@@ -812,7 +841,7 @@ function renderInfo(){
       <dt>領隊</dt><dd>金妮，電話與 LINE 群組請見旅行社手冊</dd>
       <dt>防詐</dt><dd>165 反詐騙專線；旅行社不會以任何名義要求個人帳號資訊</dd>
       <dt>保險</dt><dd>旅行業責任險 500 萬＋意外醫療 20 萬（實支實付），可自行加保旅平險</dd></dl>
-    <p class="foot">車程皆為遊覽車／一般路況預估，實際依當日交通與領隊安排為準。圖片為 Unsplash 示意圖。</p>
+    <p class="foot">車程皆為遊覽車／一般路況預估，實際依當日交通與領隊安排為準。景點照片已核對拍攝地點，來源為 Unsplash 與 Wikimedia Commons（作者與授權標示在各景點的詳細頁）；美食照片為料理示意圖。</p>
   </div>`;
 }
 
@@ -869,10 +898,10 @@ function openItem(i){
   const it = ALL[i], isFood = it.type==='food';
   shImg.style.display = it.img ? '' : 'none';
   if (it.img) shImg.src = U(it.img,1200);
-  shImg.alt = it.name + ' 示意圖';
+  shImg.alt = it.cap || it.name;
   shBody.innerHTML = `
     <div class="sh-kicker">DAY ${it.day.d} ・ ${it.day.md}（${it.day.wk}）・ ${TAG[it.type]}</div>
-    <h3 class="sh-title" id="shTitle">${esc(it.name)}</h3><div class="jp">${esc(it.jp)}</div>
+    <h3 class="sh-title" id="shTitle">${esc(it.name)}</h3><div class="jp">${esc(it.jp)}</div>${it.cap?`<div class="credit">照片：${esc(it.cap)}${it.credit?'｜'+esc(it.credit):''}</div>`:''}
     <p class="sh-desc">${esc(it.desc)}</p>
     <div class="blk drive"><h4>${ICON[it.leg.m]}交通預估</h4>
       <div class="drive-route">${esc(it.drive.r[0])} ➔ ${esc(it.drive.r[1])}，<em>${esc(it.drive.t)}</em></div>
