@@ -394,12 +394,12 @@ const DAYS = [
     blog:['金賞可樂餅（湯布院金賞コロッケ）：牛肉可樂餅得獎款','Milch 半熟起司蛋糕：熱的、冷的兩種都有','B-speak 蛋糕捲：下午茶首選，見下方美食卡'],
     q:'湯の坪街道' },
   { type:'spot', name:'史努比茶屋', jp:'スヌーピー茶屋 由布院店', img:'1760243875212-ebaaf3126fb8',
-    leg:{m:'walk', t:'湯之坪街道上，步行即達'},
+    leg:{m:'walk', t:'湯布院街區內，步行前往'},
     desc:'全日本第一家日式風格的史努比專賣店與茶屋，有和風甜點與限定周邊。',
-    drive:{r:['湯之坪街道','史努比茶屋'], t:'步行約 5 分鐘', n:'位於湯之坪街道中段。'},
+    drive:{r:['湯之坪街道','史努比茶屋'], t:'步行約 5 分鐘', n:'已搬遷到湯布院町川上 1540-2（Tabelog 資料），請用導航前往。'},
     photo:['店門口和風造型立像是排隊熱點，早到先拍','甜點上桌後側光拍，拉花與造型最立體'],
     blog:['茶屋內用常要排隊，時間不夠可買外帶麵包或周邊','和風主題的抹茶甜點、聖代是人氣款','由布院店有地區限定商品'],
-    q:'スヌーピー茶屋 由布院店' },
+    q:'SNOOPY茶屋 由布院 湯布院町川上1540-2' },
   { type:'spot', name:'金鱗湖', jp:'金鱗湖', img:'1624517608532-c6cd07c012eb',
     leg:{m:'walk', t:'步行約 10 分'},
     desc:'溫泉與泉水匯流成的湖，冬天湖面也冒著熱氣，是湯布院晨霧的來源。',
@@ -626,11 +626,11 @@ const FOOD = [
    photo:['切片斷面朝鏡頭，白色奶油與蛋糕體對比','拿著紙盒以湯布院街道為背景'],
    q:'B-speak 由布院', ig:'bspeak', th:'B-speak 湯布院 蛋糕捲' },
  { d:3, area:'湯布院', name:'史努比茶屋 由布院店', jp:'スヌーピー茶屋 由布院店', img:'1760243875212-ebaaf3126fb8',
-   tag:'IG 超紅的角色造型抹茶甜點', from:'湯之坪街道中段，步行約 5 分',
-   info:'由布院 湯之坪街道｜內用常排隊',
+   tag:'IG 超紅的角色造型抹茶甜點', from:'已搬遷到新店址，請用導航前往',
+   info:'由布市湯布院町川上 1540-2｜9:30–17:30（Tabelog 資料）｜內用常排隊',
    tips:['和風主題的抹茶聖代、角色造型甜點是人氣款','內用排隊久，時間不夠可買外帶麵包或限定周邊','由布院店有地區限定商品'],
    photo:['門口和風造型立像早到先拍','甜點上桌後側光拍，造型最立體'],
-   q:'スヌーピー茶屋 由布院店', ig:'スヌーピー茶屋', th:'史努比茶屋 由布院' },
+   q:'SNOOPY茶屋 由布院 湯布院町川上1540-2', ig:'スヌーピー茶屋', th:'史努比茶屋 由布院' },
  { d:3, area:'中洲', name:'中洲屋台街', jp:'中洲屋台', img:'1749894274841-95fa78941841',
    tag:'福岡招牌河畔路邊攤', from:'地鐵「中洲川端」站步行約 5 分',
    info:'那珂川沿岸｜約 18:00 起陸續開攤，雨天可能休息',
@@ -663,7 +663,7 @@ const FOOD = [
    info:'福岡市中央區今泉 2-4-11｜17:00–23:00（週二、週三公休）｜092-752-8200',
    tips:['約 50 種天婦羅，大量用當季食材，甜玉米（¥280）、薩摩芋地瓜必點','和牛天婦羅 ¥680、松露馬鈴薯沙拉 ¥980、和牛土鍋飯 ¥2,980','也有 ¥5,000 的 omakase，比高級天婦羅店划算很多','招牌檸檬沙瓦；老闆很喜歡台灣，語言不通也聊得起來','平日晚上快十點還常客滿，晚餐後來續攤也行，建議先訂位'],
    photo:['天婦羅剛起鍋時，用手拿起拍切面（地瓜、蜜柑大福最上相）','吧台座位拍師傅炸天婦羅的動作'],
-   q:'博多天ぷら ながおか 今泉', ig:'博多天ぷらながおか', th:'博多天ぷら ながおか' },
+   q:'博多天ぷら ながおか 今泉', ig:'博多天ぷらながおか', igLink:'https://www.instagram.com/reel/DddsLKvq28A/', th:'博多天ぷら ながおか' },
 
  { d:4, area:'花畑町', name:'菅乃屋／むつ五郎', jp:'馬肉専門料理 むつ五郎・菅乃屋', img:'1758881906970-0893b7331da0',
    tag:'熊本晚間馬肉專門居酒屋', from:'熊本格利茲酒店步行約 10 分',
@@ -751,7 +751,10 @@ function renderDay(){
 /* ============ food ============ */
 const igUrl = tag => 'https://www.instagram.com/explore/tags/' + encodeURIComponent(tag) + '/';
 const thUrl = q => 'https://www.threads.com/search?q=' + encodeURIComponent(q) + '&serp_type=default';
-const tbUrl = q => 'https://tabelog.com/rstLst/?sk=' + encodeURIComponent(q);
+const TB = {"勝烈亭 新市街本店": "kumamoto/A4301/A430101/43000307/", "熊本拉麵 黑亭 本店": "kumamoto/A4301/A430101/43000091/", "炭火燒鳥 ヒノトリ": "kumamoto/A4301/A430101/43016434/", "元祖紅蘭亭 下通本店": "kumamoto/A4301/A430101/43000046/", "菅乃屋／馬櫻": "kumamoto/A4301/A430101/43000437/", "B-speak 奶油蛋糕捲": "oita/A4402/A440201/44000122/", "史努比茶屋 由布院店": "oita/A4402/A440201/44012534/", "中洲屋台街": "matome/6757/", "屋台 小金ちゃん": "fukuoka/A4001/A400103/40000201/", "博多一双／一蘭拉麵總本店": "fukuoka/A4001/A400101/40032701/", "敘敘苑 天神岩田屋店": "fukuoka/A4001/A400103/40061771/", "博多天ぷら ながおか": "fukuoka/A4001/A400104/40044427/", "菅乃屋／むつ五郎": "kumamoto/A4301/A430101/43000053/", "桂花拉麵 本店": "kumamoto/A4301/A430101/43000052/"};
+const ALT_TB = {"菅乃屋 銀座通り店": "kumamoto/A4301/A430101/43016177/", "一蘭 總本店": "fukuoka/A4001/A400102/40000130/"};
+const tbUrl = path => 'https://tabelog.com/' + path;
+const igHref = f => f.igLink || igUrl(f.ig);
 const TH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16.5 11.2c-.3-2.6-1.9-4-4.3-4-1.6 0-2.9.7-3.6 1.9M12.4 12.3c2.6-.3 4.7.3 4.6 2.6-.1 2-2 3.2-4 3-1.7-.1-2.7-1.2-2.6-2.4.2-1.6 2.1-2.4 6-1.9"/><path d="M19 7c-1.4-2.6-3.8-4-7-4-5 0-8 3.4-8 9s3 9 8 9c3.8 0 6.5-1.8 7.4-4.8"/></svg>';
 const IG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".8" fill="currentColor"/></svg>';
 const AREA_ORDER = {1:'熊本城彩苑・上下通', 3:'湯布院・福岡市區', 4:'太宰府・柳川・熊本'};
@@ -767,12 +770,12 @@ function foodCard(f, k){
     </button>
     <div class="acts">
       <a class="btn soc" href="${thUrl(f.th)}" target="_blank" rel="noopener">${TH_ICON}Threads</a>
-      <a class="btn soc" href="${igUrl(f.ig)}" target="_blank" rel="noopener">${IG_ICON}IG</a>
+      <a class="btn soc" href="${igHref(f)}" target="_blank" rel="noopener">${IG_ICON}${f.igLink?'IG 影片':'IG'}</a>
       <a class="btn pri" href="${navUrl(f.q)}" target="_blank" rel="noopener">${ICON.map}導航</a>
     </div>
     <div class="extra"><button class="lnk" data-f="${k}">完整解析 ›</button>
       ${f.alt?`<a class="lnk" href="${navUrl(f.alt.q)}" target="_blank" rel="noopener">導航到 ${esc(f.alt.label)}</a>`:''}
-      <a class="lnk" href="${tbUrl(f.q)}" target="_blank" rel="noopener">Tabelog 評價</a></div>
+      ${TB[f.name]?`<a class="lnk" href="${tbUrl(TB[f.name])}" target="_blank" rel="noopener">${TB[f.name].startsWith('matome')?'Tabelog 屋台精選':'Tabelog 評價'}</a>`:''}${f.alt&&ALT_TB[f.alt.label]?`<a class="lnk" href="${tbUrl(ALT_TB[f.alt.label])}" target="_blank" rel="noopener">Tabelog：${esc(f.alt.label)}</a>`:''}</div>
   </article>`;
 }
 function renderFood(){
@@ -804,7 +807,7 @@ function openFood(k){
     <div class="blk"><h4>${ICON.cam}拍照建議</h4><ul>${list(f.photo)}</ul></div>
     <div class="acts" style="padding:14px 0 0">
       <a class="btn soc" href="${thUrl(f.th)}" target="_blank" rel="noopener">${TH_ICON}Threads</a>
-      <a class="btn soc" href="${igUrl(f.ig)}" target="_blank" rel="noopener">${IG_ICON}IG</a>
+      <a class="btn soc" href="${igHref(f)}" target="_blank" rel="noopener">${IG_ICON}${f.igLink?'IG 影片':'IG'}</a>
       <a class="btn pri" href="${navUrl(f.q)}" target="_blank" rel="noopener">${ICON.map}導航</a></div>
     <p class="drive-note" style="color:var(--ink-soft);margin-top:10px">營業時間與公休可能變動，出發前用 Google Maps 再確認一次。</p>`;
   openSheet();
